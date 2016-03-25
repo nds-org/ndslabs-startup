@@ -30,5 +30,9 @@ export IP_ADDR_PUBLIC
 echo "Using internal IP: $IP_ADDR_MACHINE"
 echo "Using public IP: $IP_ADDR_PUBLIC"
 
-cat ndslabs/gui.yaml | ./mustache  kubectl create -f-
-cat ndslabs/apiserver.yaml | ./mustache kubectl create -f-
+cat ndslabs/gui.yaml | ./mustache | kubectl create -f-
+cat ndslabs/apiserver.yaml | ./mustache | kubectl create -f-
+
+echo "After the services start, you should be able to access the NDSLabs UI via:"
+echo "http://$IP_ADDR_PUBLIC:30000"
+

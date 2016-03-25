@@ -18,8 +18,9 @@ docker run \
         --address="0.0.0.0" \
         --api-servers=http://localhost:8080 \
         --config=/etc/kubernetes/manifests \
+	--allow-privileged=true --v=2
 
-if [ ! -e kubectl ]; then
+if [ ! -e ~/bin/kubectl ]; then
 	curl http://storage.googleapis.com/kubernetes-release/release/v1.2.0/bin/linux/amd64/kubectl -o ~/bin/kubectl
 	chmod +x ~/bin/kubectl
 fi

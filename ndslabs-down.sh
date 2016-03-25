@@ -1,4 +1,4 @@
 #!/bin/bash
 
-kubectl delete -f /usr/local/lib/nds/ndslabs/gui.yaml
-kubectl delete -f /usr/local/lib/nds/ndslabs/apiserver.yaml
+kubectl delete svc,rc ndslabs-apiserver
+kubectl delete svc,rc ndslabs-gui
