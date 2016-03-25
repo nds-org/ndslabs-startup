@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ndslabs-apiserver
+  labels:
+    component: ndslabs-apiserver
+spec:
+  selector:
+    component: ndslabs-apiserver
+  ports:
+    - port: 8083
+      protocol: TCP
+      nodePort: 30001
+  type: NodePort
+----
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: ndslabs-apiserver
+spec:
+  replicas: 1
+  selector:
+    component: ndslabs-apiserver
+  template:
+    metadata:
+      labels:
+        component: ndslabs-apiserver
+    spec:
+      containers:
+      - name: ndslabs-apiserver
+        image: ndslabs/apiserver:latest
+        ports:
+        - containerPort: 8083
+          protocol: TCP
+        volumeMounts:
+          - name: volumes
+            mountPath: /volumes
+        env:
+          - name: ETCD_ADDR
+            value: "{{ IP_ADDR_MACHINE }}:4001"
+          - name: KUBERNETES_ADDR
+            value: "https://{{ IP_ADDR_MACHINE }}:6443"
+          - name: CORS_ORIGIN_ADDR
+            value: "http://{{ IP_ADDR_PUBLIC }}:30000"
+          - name: HOST_ADDR
+            value: {{ IP_ADDR_PUBLIC }}
+          - name: SPEC_GIT_REPO
+            value: "https://github.com/nds-org/ndslabs-specs.git"
+          - name: SPEC_GIT_BRANCH
+            value: "master"
+      volumes:
+       - hostPath:
+            path: /volumes
+         name: volumes
+#      volumes:
+#       - name: cinder
+#         cinder:
+#           volumeID: 016af9cc-4530-4422-9eb8-95e1df993e62
+#           fsType: ext4

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+sed \
+    -e 's/{{ IP_ADDR_PUBLIC }}/'${IP_ADDR_PUBLIC}/g \
+    -e 's/{{ IP_ADDR_MACHINE }}/'${IP_ADDR_MACHINE}/g
