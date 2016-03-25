@@ -43,5 +43,5 @@ spec:
             path: /asset/png/favicon-2-32x32.png
             port: 8080
             scheme: HTTP
-          initialDelaySeconds: 60
+          initialDelaySeconds: 20
           timeoutSeconds: 120
