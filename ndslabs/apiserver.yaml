@@ -47,7 +47,7 @@ spec:
           - name: SPEC_GIT_REPO
             value: "https://github.com/nds-org/ndslabs-specs.git"
           - name: SPEC_GIT_BRANCH
-            value: "NDS-132"
+            value: "master"
       volumes:
        - hostPath:
             path: /volumes
