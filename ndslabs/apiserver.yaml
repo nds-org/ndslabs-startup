@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: ndslabs-apiserver
-        image: ndslabs/apiserver:dev
+        image: ndslabs/apiserver:latest
         ports:
         - containerPort: 8083
           protocol: TCP
