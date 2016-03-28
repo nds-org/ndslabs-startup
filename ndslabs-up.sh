@@ -36,3 +36,17 @@ cat ndslabs/apiserver.yaml | ./mustache | kubectl create -f-
 echo "After the services start, you should be able to access the NDSLabs UI via:"
 echo "http://$IP_ADDR_PUBLIC:30000"
 
+mkdir -p ~/bin
+if [ ! -e ~/bin/ndslabsctl ]; then
+    echo "Downloading ndslabsctl to ~/bin"
+    if [ "$UNAME" == "Darwin" ]; then
+        curl -sL https://github.com/nds-org/ndslabs/releases/download/v1.0-alpha/ndslabsctl-darwin-amd64 -o ~/bin/ndslabsctl
+    elif [ "$UNAME" == "Linux" ]; then
+        curl -sL https://github.com/nds-org/ndslabs/releases/download/v1.0-alpha/ndslabsctl-linux-amd64 -o ~/bin/ndslabsctl
+    fi
+    chmod +x ~/bin/ndslabsctl
+fi
+
+echo "Creating ~/.ndslabsctl.yaml"
+APISERVER=`kubectl describe svc ndslabs-apiserver | grep ^IP | awk '{print $2}'`
+echo "server: http://$APISERVER:8083" > ~/.ndslabsctl.yaml
