@@ -8,7 +8,7 @@ spec:
   selector:
     component: ndslabs-apiserver
   ports:
-    - port: 8083
+    - port: 30001
       protocol: TCP
       nodePort: 30001
   type: NodePort
@@ -30,7 +30,7 @@ spec:
       - name: ndslabs-apiserver
         image: ndslabs/apiserver:latest
         ports:
-        - containerPort: 8083
+        - containerPort: 30001
           protocol: TCP
         volumeMounts:
           - name: volumes
