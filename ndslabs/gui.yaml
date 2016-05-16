@@ -38,6 +38,10 @@ spec:
             value: {{ IP_ADDR_PUBLIC }}
           - name: APISERVER_PORT
             value: "30001"
+          - name: APISERVER_PATH
+            value: "/api"
+          - name: UI_BASE_PATH
+            value: ""
         readinessProbe:
           httpGet:
             path: /asset/png/favicon-2-32x32.png

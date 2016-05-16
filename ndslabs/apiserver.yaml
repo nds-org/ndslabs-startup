@@ -29,6 +29,7 @@ spec:
       containers:
       - name: ndslabs-apiserver
         image: ndslabs/apiserver:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 30001
           protocol: TCP
