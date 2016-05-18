@@ -42,13 +42,13 @@ spec:
           - name: KUBERNETES_ADDR
             value: "https://{{ IP_ADDR_MACHINE }}:6443"
           - name: CORS_ORIGIN_ADDR
-            value: "https://www.{{ DOMAIN }}"
+            value: "{{ CORS_ORIGIN_ADDR }}"
           - name: SPEC_GIT_REPO
             value: "https://github.com/nds-org/ndslabs-specs.git"
           - name: SPEC_GIT_BRANCH
             value: "master"
           - name: INGRESS
-            value: "LoadBalancer"
+            value: "{{ INGRESS }}"
           - name: DOMAIN
             value: "{{ DOMAIN }}"
       volumes:

@@ -3,4 +3,10 @@
 sed \
     -e 's/{{ IP_ADDR_PUBLIC }}/'${IP_ADDR_PUBLIC}/g \
     -e 's/{{ IP_ADDR_MACHINE }}/'${IP_ADDR_MACHINE}/g \
+    -e 's?{{ APISERVER_HOST }}?'${APISERVER_HOST}?g \
+    -e 's/{{ APISERVER_PORT }}/'${APISERVER_PORT}/g \
+    -e 's/{{ APISERVER_SECURE }}/'${APISERVER_SECURE}/g \
+    -e 's?{{ CORS_ORIGIN_ADDR }}?'${CORS_ORIGIN_ADDR}?g \
+    -e 's/{{ INGRESS }}/'${INGRESS}/g \
     -e 's/{{ DOMAIN }}/'${DOMAIN}/g
+

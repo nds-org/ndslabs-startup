@@ -35,11 +35,13 @@ spec:
           protocol: TCP
         env:
           - name: APISERVER_HOST
-            value: www.{{ DOMAIN }}
+            value: {{ APISERVER_HOST }}
           - name: APISERVER_PORT
-            value: "443"
+            value: "{{ APISERVER_PORT }}"
           - name: APISERVER_PATH
             value: "/api"
+          - name: APISERVER_SECURE
+            value: "{{ APISERVER_SECURE }}"
           - name: UI_BASE_PATH
             value: "/ui"
         readinessProbe:
