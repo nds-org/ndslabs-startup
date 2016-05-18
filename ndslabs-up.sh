@@ -59,6 +59,8 @@ export IP_ADDR_PUBLIC
 export IP_ADDR_MACHINE
 
 
+ubectl label nodes 127.0.0.1 ndslabs-role=compute
+
 if [ -n "$DOMAIN" ]; then 
     kubectl create secret generic ndslabs-tls-secret --from-file=tls.crt=certs/ndslabs.cert --from-file=tls.key=certs/ndslabs.key --namespace=default
     kubectl create -f ndslabs/loadbalancer.yaml
