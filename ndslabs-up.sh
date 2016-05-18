@@ -12,13 +12,21 @@ elif [ "$UNAME" == "Linux" ]; then
     IP_ADDR_PUBLIC=$(curl -s https://api.ipify.org)
 fi
 
-echo -n "Enter the public IP address for this server [$IP_ADDR_PUBLIC] or ENTER to accept the default:"
-read publicip
-if [ -n "$publicip" ]; then 
-	IP_ADDR_PUBLIC=$publicip
+echo -n "Enter the domain name for this server or ENTER to not configure: "
+read domain
+if [ -n "$domain" ]; then 
+	DOMAIN=$domain
 fi
 
-echo -n "Enter the internal IP address for this server [$IP_ADDR_MACHINE] or ENTER to accept the default:"
+if [ -z $DOMAIN ]; then
+   echo -n "Enter the public IP address for this server [$IP_ADDR_PUBLIC] or ENTER to accept the default: "
+   read publicip
+   if [ -n "$publicip" ]; then 
+   	IP_ADDR_PUBLIC=$publicip
+   fi
+fi
+
+echo -n "Enter the internal IP address for this server [$IP_ADDR_MACHINE] or ENTER to accept the default: "
 read internaip
 if [ -n "$internaip" ]; then 
 	IP_ADDR_MACHINE=$internaip
@@ -26,15 +34,22 @@ fi
 
 export IP_ADDR_MACHINE
 export IP_ADDR_PUBLIC
+export DOMAIN
 
-echo "Using internal IP: $IP_ADDR_MACHINE"
-echo "Using public IP: $IP_ADDR_PUBLIC"
-
+kubectl create secret generic ndslabs-tls-secret --from-file=tls.crt=certs/ndslabs.cert --from-file=tls.key=certs/ndslabs.key --namespace=default
+kubectl create -f ndslabs/loadbalancer.yaml
+kubectl create -f ndslabs/default-backend.yaml
 cat ndslabs/gui.yaml | ./mustache | kubectl create -f-
 cat ndslabs/apiserver.yaml | ./mustache | kubectl create -f-
+cat ndslabs/default-ingress.yaml | ./mustache | kubectl create -f-
 
-echo "After the services start, you should be able to access the NDSLabs UI via:"
-echo "http://$IP_ADDR_PUBLIC:30000"
+if [ -n $DOMAIN ]; then 
+    echo "After the services start, you should be able to access the NDSLabs UI via:"
+    echo "https://www.$DOMAIN"
+else
+    echo "After the services start, you should be able to access the NDSLabs UI via:"
+    echo "http://$IP_ADDR_PUBLIC:30000"
+fi
 
 mkdir -p ~/bin
 if [ ! -e ~/bin/ndslabsctl ]; then

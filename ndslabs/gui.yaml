@@ -35,17 +35,17 @@ spec:
           protocol: TCP
         env:
           - name: APISERVER_HOST
-            value: {{ IP_ADDR_PUBLIC }}
+            value: www.{{ DOMAIN }}
           - name: APISERVER_PORT
-            value: "30001"
+            value: "443"
           - name: APISERVER_PATH
             value: "/api"
           - name: UI_BASE_PATH
-            value: ""
+            value: "/ui"
         readinessProbe:
           httpGet:
-            path: /asset/png/favicon-2-32x32.png
+            path: /ui/asset/png/favicon-2-32x32.png
             port: 8080
             scheme: HTTP
-          initialDelaySeconds: 20
+          initialDelaySeconds: 10
           timeoutSeconds: 120

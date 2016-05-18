@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: ndslabs-apiserver
-        image: ndslabs/apiserver:latest
+        image: ndslabs/apiserver:NDS-260
         imagePullPolicy: Always
         ports:
         - containerPort: 30001
@@ -42,19 +42,16 @@ spec:
           - name: KUBERNETES_ADDR
             value: "https://{{ IP_ADDR_MACHINE }}:6443"
           - name: CORS_ORIGIN_ADDR
-            value: "http://{{ IP_ADDR_PUBLIC }}:30000"
-          - name: HOST_ADDR
-            value: {{ IP_ADDR_PUBLIC }}
+            value: "https://www.{{ DOMAIN }}"
           - name: SPEC_GIT_REPO
             value: "https://github.com/nds-org/ndslabs-specs.git"
           - name: SPEC_GIT_BRANCH
             value: "master"
+          - name: INGRESS
+            value: "LoadBalancer"
+          - name: DOMAIN
+            value: "{{ DOMAIN }}"
       volumes:
        - hostPath:
             path: /volumes
          name: volumes
-#      volumes:
-#       - name: cinder
-#         cinder:
-#           volumeID: 016af9cc-4530-4422-9eb8-95e1df993e62
-#           fsType: ext4
