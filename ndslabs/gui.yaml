@@ -30,6 +30,7 @@ spec:
       containers:
       - name: ndslabs-gui
         image: ndslabs/ndslabs-gui:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
           protocol: TCP
