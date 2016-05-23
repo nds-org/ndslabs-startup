@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ndslabs-ingress
+spec:
+  rules:
+  - host: www.iassist.ndslabs.org
+    http:
+      paths:
+      - path: /api
+        backend:
+          serviceName: ndslabs-apiserver
+          servicePort: 30001
+      - path: /ui
+        backend:
+          serviceName: ndslabs-gui
+          servicePort: 80
