@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: ndslabs-apiserver
-        image: ndslabs/apiserver:NDS-260
+        image: ndslabs/apiserver:NDS-260b
         imagePullPolicy: Always
         ports:
         - containerPort: 30001
