@@ -23,6 +23,9 @@ spec:
       containers:
       - name: etcd
         image: gcr.io/google_containers/etcd-amd64:2.2.1
+        env:
+        - name: DOCKER_FIX
+          value: '            '
         resources:
           # TODO: Set memory limits when we've profiled the container for large
           # clusters, then set request = limit to keep this container in
@@ -128,3 +131,5 @@ spec:
       - name: etcd-storage
         emptyDir: {}
       dnsPolicy: Default  # Don't use cluster DNS.
+      nodeSelector:
+          ndslabs-node-role: loadbalancer
