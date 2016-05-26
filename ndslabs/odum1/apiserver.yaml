@@ -35,7 +35,7 @@ spec:
           protocol: TCP
         volumeMounts:
           - name: volumes
-            mountPath: /volumes
+            mountPath: /var/glfs/ndslabs/volumes
         env:
           - name: ETCD_ADDR
             value: "192.168.100.186:2379"
@@ -51,9 +51,11 @@ spec:
             value: "NodePort"
           - name: DOMAIN
             value: "iassist.ndslabs.org"
+          - name: VOLUME_PATH
+            value: "/var/glfs/ndslabs/volumes"
       volumes:
        - hostPath:
-            path: /volumes
+            path: /var/glfs/ndslabs/volumes
          name: volumes
       nodeSelector:
           ndslabs-node-role: compute
