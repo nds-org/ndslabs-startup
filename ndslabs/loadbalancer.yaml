@@ -37,3 +37,5 @@ spec:
         - --running-in-cluster=true
         - --healthz-port=9999
       hostNetwork: true
+      nodeSelector:
+          ndslabs-node-role: loadbalancer

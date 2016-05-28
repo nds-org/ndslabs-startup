@@ -1,0 +1,23 @@
+git clone https://github.com/craig-willis/ndslabs-startup
+cd ndslabs-startup/
+kubectl label node cwtest2-node1 ndslabs-node-role=compute
+kubectl label node cwtest1-node2 ndslabs-node-role=compute
+kubectl label node cwtest1-loadbal ndslabs-node-role=loadbalancer
+sudo systemctl stop kube-addons.service
+kubectl create -f addons/namespace.yaml
+kubectl create -f addons/dns/skydns-svc.yaml 
+kubectl create -f addons/dns/skydns-rc.yaml 
+cd ndslabs/odum1/
+kubectl create -f addons/namespace.yaml
+kubectl create -f addons/dns/skydns-svc.yaml 
+kubectl create -f addons/dns/skydns-rc.yaml 
+kubectl create -f addons/cluster-logging/es-controller.yaml 
+kubectl create -f addons/cluster-logging/es-service.yaml 
+kubectl create -f addons/cluster-logging/kibana-controller.yaml 
+kubectl create -f addons/cluster-logging/kibana-service.yaml 
+kubectl create -f addons/cluster-monitoring/heapster-controller.yaml
+kubectl create -f addons/cluster-monitoring/heapster-service.yaml
+kubectl create -f addons/cluster-monitoring/influxdb-grafana-controller.yaml
+kubectl create -f addons/cluster-monitoring/influxdb-service.yaml
+kubectl create -f addons/cluster-monitoring/grafana-service.yaml
+./ndslabs-up-multinode.sh 

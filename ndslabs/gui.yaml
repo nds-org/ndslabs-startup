@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: ndslabs-gui
-        image: ndslabs/ndslabs-gui:latest
+        image: ndslabs/ndslabs-gui:NDS-272
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -52,3 +52,5 @@ spec:
             scheme: HTTP
           initialDelaySeconds: 10
           timeoutSeconds: 120
+      nodeSelector:
+          ndslabs-node-role: compute
