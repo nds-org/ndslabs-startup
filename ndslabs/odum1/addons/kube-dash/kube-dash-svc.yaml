@@ -8,7 +8,7 @@
     name: "kubedash"
     namespace: "kube-system"
   spec:
-    type: "LoadBalancer"
+    type: "NodePort"
     ports:
       -
         port: 80
