@@ -38,9 +38,9 @@ spec:
             mountPath: /var/glfs/ndslabs/volumes
         env:
           - name: ETCD_ADDR
-            value: "192.168.100.186:2379"
+            value: "192.168.100.67:2379"
           - name: KUBERNETES_ADDR
-            value: "https://192.168.100.186:443"
+            value: "https://192.168.100.67:443"
           - name: CORS_ORIGIN_ADDR
             value: "http://www.iassist.ndslabs.org"
           - name: SPEC_GIT_REPO
@@ -52,10 +52,10 @@ spec:
           - name: DOMAIN
             value: "iassist.ndslabs.org"
           - name: VOLUME_PATH
-            value: "/var/glfs/ndslabs/volumes"
+            value: "/ndslabs/data/volumes"
       volumes:
        - hostPath:
-            path: /var/glfs/ndslabs/volumes
+            path: "/ndslabs/data/volumes"
          name: volumes
       nodeSelector:
           ndslabs-node-role: compute
