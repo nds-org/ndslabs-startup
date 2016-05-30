@@ -28,14 +28,14 @@ spec:
     spec:
       containers:
       - name: ndslabs-apiserver
-        image: ndslabs/apiserver:NDS-260b
+        image: ndslabs/apiserver:NDS-260
         imagePullPolicy: Always
         ports:
         - containerPort: 30001
           protocol: TCP
         volumeMounts:
           - name: volumes
-            mountPath: /var/glfs/ndslabs/volumes
+            mountPath: "/ndslabs/data/volumes"
         env:
           - name: ETCD_ADDR
             value: "192.168.100.67:2379"

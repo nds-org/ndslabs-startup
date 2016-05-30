@@ -35,7 +35,7 @@ spec:
           protocol: TCP
         volumeMounts:
           - name: volumes
-            mountPath: /volumes
+            mountPath: "/ndslabs/data/volumes"
         env:
           - name: ETCD_ADDR
             value: "{{ IP_ADDR_MACHINE }}:2379"
