@@ -1,0 +1,6 @@
+ndslabs/dataverse:latest
+ndslabs/dataverse-icat:latest
+postgres:9.3
+ndslabs/dataverse-rserve:latest
+ndslabs/dataverse-solr:latest
+ndslabs/irods-icat:latest

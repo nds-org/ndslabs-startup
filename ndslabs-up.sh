@@ -63,14 +63,14 @@ kubectl label nodes 127.0.0.1 ndslabs-role=compute
 
 if [ -n "$DOMAIN" ]; then 
     kubectl create secret generic ndslabs-tls-secret --from-file=tls.crt=certs/ndslabs.cert --from-file=tls.key=certs/ndslabs.key --namespace=default
-    kubectl create -f ndslabs/loadbalancer.yaml
-    kubectl create -f ndslabs/default-backend.yaml
-    cat ndslabs/default-ingress.yaml | ./mustache | kubectl create -f-
+    kubectl create -f ndslabs/lambert/loadbalancer.yaml
+    kubectl create -f ndslabs/lambert/default-backend.yaml
+    cat ndslabs/lambert/default-ingress.yaml | ./mustache | kubectl create -f-
 fi
 
 
-cat ndslabs/gui.yaml | ./mustache | kubectl create -f-
-cat ndslabs/apiserver.yaml | ./mustache | kubectl create -f-
+cat ndslabs/lambert/gui.yaml | ./mustache | kubectl create -f-
+cat ndslabs/lambert/apiserver.yaml | ./mustache | kubectl create -f-
 
 if [ -n "$DOMAIN" ]; then 
     echo "After the services start, you should be able to access the NDSLabs UI via:"
