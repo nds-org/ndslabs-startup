@@ -29,7 +29,7 @@ spec:
 #      hostNetwork: true
       containers:
       - name: ndslabs-apiserver
-        image: ndslabs/apiserver:NDS-260
+        image: ndslabs/apiserver:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 30001
@@ -39,19 +39,19 @@ spec:
             mountPath: /ndslabs/data/volumes
         env:
           - name: ETCD_ADDR
-            value: "192.168.100.26:2379"
+            value: "192.168.100.197:4001"
           - name: KUBERNETES_ADDR
-            value: "https://192.168.100.26:443"
+            value: "https://192.168.100.197:6443"
           - name: CORS_ORIGIN_ADDR
-            value: "https://www.lambert.ndslabs.org"
+            value: "http://141.142.208.180:30000"
           - name: SPEC_GIT_REPO
             value: "https://github.com/nds-org/ndslabs-specs.git"
           - name: SPEC_GIT_BRANCH
             value: "master"
           - name: INGRESS
-            value: "LoadBalancer"
+            value: "NodePort"
           - name: DOMAIN
-            value: "lambert.ndslabs.org"
+            value: "141.142.208.180"
           - name: VOLUME_PATH
             value: "/ndslabs/data/volumes"
       volumes:

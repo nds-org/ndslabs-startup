@@ -27,27 +27,34 @@ spec:
       labels:
         component: ndslabs-gui
     spec:
+#      volumes:
+#       - hostPath:
+#            path: "/home/"
+#         name: src
       containers:
       - name: ndslabs-gui
-        image: ndslabs/ndslabs-gui:NDS-272
+        image: ndslabs/ndslabs-gui:develop
         imagePullPolicy: Always
+#        volumeMounts:
+#          - name: src
+#            mountPath: "/home/core/ndslabs/gui/js/"
         ports:
         - containerPort: 8080
           protocol: TCP
         env:
           - name: APISERVER_HOST
-            value: "www.lambert.ndslabs.org"
+            value: "141.142.208.180"
           - name: APISERVER_PORT
-            value: "443"
+            value: "30001"
           - name: APISERVER_PATH
             value: "/api"
           - name: APISERVER_SECURE
-            value: "true"
+            value: "false"
           - name: UI_BASE_PATH
-            value: "/ui"
+            value: ""
         readinessProbe:
           httpGet:
-            path: /ui/asset/png/favicon-2-32x32.png
+            path: /asset/png/favicon-2-32x32.png
             port: 8080
             scheme: HTTP
           initialDelaySeconds: 10
