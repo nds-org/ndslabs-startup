@@ -52,6 +52,8 @@ spec:
             value: "NodePort"
           - name: DOMAIN
             value: "141.142.208.180"
+          - name: VOLUME_NAME
+            value: "global"
           - name: VOLUME_PATH
             value: "/ndslabs/data/volumes"
       volumes:
