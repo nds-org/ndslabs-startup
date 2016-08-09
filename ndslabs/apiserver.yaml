@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: ndslabs-apiserver
-        image: craigwillis/apiserver:latest
+        image: ndslabs/apiserver:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 30001
@@ -44,9 +44,9 @@ spec:
           - name: CORS_ORIGIN_ADDR
             value: "{{ CORS_ORIGIN_ADDR }}"
           - name: SPEC_GIT_REPO
-            value: "https://github.com/craig-willis/ndslabs-specs.git"
+            value: "https://github.com/nds-org/ndslabs-specs.git"
           - name: SPEC_GIT_BRANCH
-            value: "NDS-423"
+            value: "master"
           - name: INGRESS
             value: "{{ INGRESS }}"
           - name: DOMAIN

@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: ndslabs-gui
-        image: ndslabs/ndslabs-gui:latest
+        image: ndslabs/ndslabs-web-ui:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
