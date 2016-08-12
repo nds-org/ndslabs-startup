@@ -59,7 +59,7 @@ export IP_ADDR_PUBLIC
 export IP_ADDR_MACHINE
 
 
-kubectl label nodes 127.0.0.1 ndslabs-role=compute
+kubectl label nodes 127.0.0.1 ndslabs-node-role=compute
 
 if [ -n "$DOMAIN" ]; then 
     kubectl create secret generic ndslabs-tls-secret --from-file=tls.crt=certs/ndslabs.cert --from-file=tls.key=certs/ndslabs.key --namespace=default

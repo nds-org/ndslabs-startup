@@ -7,4 +7,4 @@ kubectl delete rc nginx-ilb-rc
 kubectl delete ingress ndslabs-ingress
 kubectl delete secret ndslabs-tls-secret
 
-kubectl label nodes 127.0.0.1 ndslabs-role-
+kubectl label nodes 127.0.0.1 ndslabs-node-role-
