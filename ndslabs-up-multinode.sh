@@ -38,12 +38,14 @@ export IP_ADDR_MACHINE
 
 
 kubectl create secret generic ndslabs-tls-secret --from-file=tls.crt=certs/ndslabs.cert --from-file=tls.key=certs/ndslabs.key --namespace=default
-#kubectl create -f ndslabs/loadbalancer.yaml
-#kubectl create -f ndslabs/default-backend.yaml
+kubectl create -f ndslabs/loadbalancer.yaml
+kubectl create -f ndslabs/default-backend.yaml
 cat ndslabs/default-ingress.yaml | ./mustache | kubectl create -f-
+kubectl label nodes 127.0.0.1 ndslabs-node-role=compute
 
 cat ndslabs/gui.yaml | ./mustache | kubectl create -f-
 cat ndslabs/apiserver.yaml | ./mustache | kubectl create -f-
 
 echo "After the services start, you should be able to access the NDSLabs UI via:"
 echo "https://www.$DOMAIN"
+

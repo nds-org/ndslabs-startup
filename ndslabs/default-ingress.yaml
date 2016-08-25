@@ -5,17 +5,17 @@ metadata:
 spec:
   tls:
   - hosts:
-    - www.{{ DOMAIN }}
+    - www.cwtest.ndslabs.org
     secretName: ndslabs-tls-secret
   rules:
-  - host: www.{{ DOMAIN }}
+  - host: www.cwtest.ndslabs.org
     http:
       paths:
       - path: /api
         backend:
           serviceName: ndslabs-apiserver
           servicePort: 30001
-      - path: /ui
+      - path: /
         backend:
           serviceName: ndslabs-gui
           servicePort: 80

@@ -11,7 +11,7 @@ APISERVER_HOST="www.$domain"
 CORS_ORIGIN_ADDR="https://www.$domain"
 APISERVER_SECURE="false"
 APISERVER_PORT="80"
-INGRESS=NodePort
+INGRESS=Loadbalancer
 
 
 echo -n "Enter the internal IP address for this server [$IP_ADDR_MACHINE] or ENTER to accept the default: "
