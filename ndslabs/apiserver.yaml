@@ -30,6 +30,8 @@ spec:
       - name: ndslabs-apiserver
         image: ndslabs/apiserver:latest
         imagePullPolicy: Always
+        securityContext:
+          privileged: true
         ports:
         - containerPort: 30001
           protocol: TCP
@@ -55,6 +57,10 @@ spec:
             value: "/ndslabs/data/volumes"
           - name: VOLUME_NAME
             value: "global"
+          - name: SUPPORT_EMAIL
+            value: "ndslabstest@gmail.com"
+          - name: SERVICE_TIMEOUT
+            value: "10"
       volumes:
        - hostPath:
             path: "/ndslabs/data/volumes"
