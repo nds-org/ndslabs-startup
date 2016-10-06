@@ -58,7 +58,7 @@ spec:
           - name: VOLUME_NAME
             value: "global"
           - name: SUPPORT_EMAIL
-            value: "ndslabstest@gmail.com"
+            value: "you@email.com"
           - name: SERVICE_TIMEOUT
             value: "10"
       volumes:

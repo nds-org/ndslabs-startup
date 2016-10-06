@@ -5,10 +5,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - www.cwtest.ndslabs.org
+    - www.{{ DOMAIN }}
     secretName: ndslabs-tls-secret
   rules:
-  - host: www.cwtest.ndslabs.org
+  - host: www.{{ DOMAIN }}
     http:
       paths:
       - path: /api
