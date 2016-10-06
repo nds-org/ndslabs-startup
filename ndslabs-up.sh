@@ -37,7 +37,7 @@ export IP_ADDR_PUBLIC
 export IP_ADDR_MACHINE
 
 
-if [ ! -f "certs/ndslabs.cert" ] then;
+if [ ! -f "certs/ndslabs.cert" ]; then
    echo "Creating self-signed certificate for $DOMAIN"
    mkdir -p certs
    openssl genrsa 2048 > certs/ndslabs.key
