@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#
+# Start Labs Workbench 
+#
 
 IP_ADDR_MACHINE=$(ifconfig eth0  | grep "inet " | awk '{print $2}')
 
