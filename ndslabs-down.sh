@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#
+# Stop Labs Workbench
+#
+
 kubectl delete svc,rc ndslabs-apiserver
 kubectl delete svc,rc ndslabs-gui
 kubectl delete svc,rc default-http-backend

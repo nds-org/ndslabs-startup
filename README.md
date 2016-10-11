@@ -1,12 +1,16 @@
 # Labs Workbench Developer Startup
 
-Startup scripts to run the Labs Workbench services on a single developer node.
+This repository contains startup scripts to run the Labs Workbench services on a single developer node. This includes:
+* Small Kubernetes cluster via Docker containers
+* Nginx ingress controller
+* Labs Workbench Angular UI and REST API Server
 
 ## Prerequisites
 * Docker 1.9+
 * Wildcard DNS or etc hosts entry
 
 ## To run
+Start Kubernetes:
 ```
 ./kube-up.sh
 ```
@@ -23,3 +27,5 @@ Run the Labs Workbench startup:
 ```
 ./ndslabs-up.sh
 ```
+
+You will be prompted to enter the domain name for the server. This assumes wildcard DNS is available, but you can add individual /etc/hosts entries if needed.

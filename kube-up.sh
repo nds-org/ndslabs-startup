@@ -1,5 +1,8 @@
 #!/bin/sh
 
+#
+# Start Kubernetes via Docker
+#
 docker run \
     --volume=/:/rootfs:ro \
     --volume=/sys:/sys:ro \
