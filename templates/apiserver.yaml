@@ -10,7 +10,7 @@ spec:
   ports:
     - port: 30001
       protocol: TCP
-----
+---
 apiVersion: v1
 kind: ReplicationController
 metadata:

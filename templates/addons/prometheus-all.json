@@ -5,7 +5,8 @@
         "labels": {
             "name": "kube-prometheus"
         },
-        "name": "kube-prometheus"
+        "name": "kube-prometheus",
+        "namespace": "kube-system"
     },
     "spec": {
         "replicas": 1,
