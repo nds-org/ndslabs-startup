@@ -2,8 +2,7 @@
   "apiVersion": "v1",
   "kind": "Pod",
   "metadata": {
-    "name": "k8s-etcd",
-    "namespace": "kube-system"
+    "name": "k8s-etcd"
   },
   "spec": {
     "hostNetwork": true,
