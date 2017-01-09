@@ -22,8 +22,8 @@ docker run \
         --hostname-override="127.0.0.1" \
         --address="0.0.0.0" \
         --api-servers=http://localhost:8080 \
-        --config=/etc/kubernetes/manifests \
-	--allow-privileged=true --v=2
+        --config=etc/kubernetes/manifests \
+	--allow-privileged=true --v=4
 
 mkdir -p ~/bin
 curl http://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/linux/amd64/kubectl -o ~/bin/kubectl

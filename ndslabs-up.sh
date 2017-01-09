@@ -15,14 +15,26 @@ CORS_ORIGIN_ADDR="https://www.$domain"
 APISERVER_SECURE="true"
 APISERVER_PORT="443"
 INGRESS=LoadBalancer
+SUPPORT_EMAIL="ndslabs-support@nationaldataservice.org"
+REQUIRE_APPROVAL="false"
 
-
-echo -n "Enter the internal IP address for this server [$IP_ADDR_MACHINE] or ENTER to accept the default: "
+echo -n "Enter the internal IP address for this server [$IP_ADDR_MACHINE]: "
 read internalip
 if [ -n "$internalip" ]; then 
     IP_ADDR_MACHINE=$internalip
 fi
 
+echo -n "Enter the support e-mail to use for this server [$SUPPORT_EMAIL]: "
+read supportemail
+if [ -n "$supportemail" ]; then
+    SUPPORT_EMAIL=$supportemail
+fi
+
+echo -n "Require account approval? [y/N] "
+read requireapproval
+if [ -n "$requireapproval" ]; then
+    REQUIRE_APPROVAL=$requireapproval
+fi
 
 echo "APISERVER_HOST=$APISERVER_HOST"
 echo "APISERVER_PORT=$APISERVER_PORT"
@@ -30,6 +42,8 @@ echo "APISERVER_SECURE=$APISERVER_SECURE"
 echo "CORS_ORIGIN_ADDR=$CORS_ORIGIN_ADDR"
 echo "INGRESS=$INGRESS"
 echo "DOMAIN=$DOMAIN"
+echo "SUPPORT_EMAIL=$SUPPORT_EMAIL"
+echo "REQUIRE_APPROVAL=$REQUIRE_APPROVAL"
 export APISERVER_HOST
 export APISERVER_PORT
 export APISERVER_SECURE
