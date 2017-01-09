@@ -73,7 +73,7 @@
       "volumeMounts": [
         {
           "name": "data",
-          "mountPath": "/data"
+          "mountPath": "/srv/kubernetes"
         }
       ]
     }
