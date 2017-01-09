@@ -14,7 +14,7 @@
         "command": [
           "/usr/local/bin/etcd",
           "--bind-addr=0.0.0.0:4001",
-          "--advertise-client-urls=http://127.0.0.1:2379,http://127.0.0.1:4001",
+          "--advertise-client-urls=http://127.0.0.1:4001",
           "--data-dir=/var/etcd/data"
         ],
         "volumeMounts": [
