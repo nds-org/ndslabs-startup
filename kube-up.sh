@@ -10,7 +10,7 @@ docker run \
     --volume=/var/lib/docker/:/var/lib/docker:rw \
     --volume=/var/lib/kubelet/:/var/lib/kubelet:rw \
     --volume=/var/run:/var/run:rw \
-    --volume=`pwd`/manifests:/etc/kubernetes/manifests \
+    --volume=`pwd`/manifests/etcd.json:/etc/kubernetes/manifests/etcd.josn \
     --net=host \
     --pid=host \
     --privileged=true \
@@ -22,8 +22,8 @@ docker run \
         --hostname-override="127.0.0.1" \
         --address="0.0.0.0" \
         --api-servers=http://localhost:8080 \
-        --config=etc/kubernetes/manifests \
-	--allow-privileged=true --v=4
+        --config=/etc/kubernetes/manifests \
+	--allow-privileged=true --v=2
 
 mkdir -p ~/bin
 curl http://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/linux/amd64/kubectl -o ~/bin/kubectl
