@@ -58,7 +58,7 @@ spec:
           - name: SUPPORT_EMAIL
             value: "{{ SUPPORT_EMAIL }}"
           - name: REQUIRE_APPROVAL
-            value: "false"
+            value: "{{ REQUIRE_APPROVAL }}"
           - name: SERVICE_TIMEOUT
             value: "10"
       volumes:
