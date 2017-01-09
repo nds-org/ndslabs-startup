@@ -15,8 +15,13 @@ CORS_ORIGIN_ADDR="https://www.$domain"
 APISERVER_SECURE="true"
 APISERVER_PORT="443"
 INGRESS=LoadBalancer
-SUPPORT_EMAIL="ndslabs-support@nationaldataservice.org"
-REQUIRE_APPROVAL="false"
+if [ -n "$SUPPORT_EMAIL ]; then
+    SUPPORT_EMAIL="ndslabs-support@nationaldataservice.org"
+fi
+
+if [ -n "$REQUIRE_APPROVAL" ]; then
+    REQUIRE_APPROVAL="false"
+fi
 
 echo -n "Enter the internal IP address for this server [$IP_ADDR_MACHINE]: "
 read internalip
@@ -52,6 +57,8 @@ export INGRESS
 export DOMAIN
 export IP_ADDR_PUBLIC
 export IP_ADDR_MACHINE
+export SUPPORT_EMAIL
+export REQUIRE_APPROVAL
 
 
 if [ ! -f "certs/ndslabs.cert" ]; then
