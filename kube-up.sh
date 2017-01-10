@@ -23,7 +23,8 @@ docker run \
         --address="0.0.0.0" \
         --api-servers=http://localhost:8080 \
         --config=/etc/kubernetes/manifests \
-	--allow-privileged=true --v=2
+	--allow-privileged=true --v=2 \
+    || docker start kubelet
 
 mkdir -p ~/bin
 curl http://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/linux/amd64/kubectl -o ~/bin/kubectl
