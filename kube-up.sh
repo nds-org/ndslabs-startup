@@ -8,7 +8,7 @@ docker run \
     --volume=/:/rootfs:ro \
     --volume=/sys:/sys:ro \
     --volume=/var/lib/docker/:/var/lib/docker:rw \
-    --volume=/var/lib/kubelet/:/var/lib/kubelet:rw \
+    --volume=/var/lib/kubelet/:/var/lib/kubelet:rw,rslave \
     --volume=/var/run:/var/run:rw \
     --volume=`pwd`/manifests:/etc/kubernetes/manifests \
     --net=host \

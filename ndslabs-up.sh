@@ -15,7 +15,7 @@ CORS_ORIGIN_ADDR="https://www.$domain"
 APISERVER_SECURE="true"
 APISERVER_PORT="443"
 INGRESS=LoadBalancer
-SUPPORT_EMAIL="ndslabs-support@nationaldataservice.org"
+SUPPORT_EMAIL="your@email.com"
 REQUIRE_APPROVAL="false"
 
 echo -n "Enter the internal IP address for this server [$IP_ADDR_MACHINE]: "
@@ -24,16 +24,21 @@ if [ -n "$internalip" ]; then
     IP_ADDR_MACHINE="$internalip"
 fi
 
-echo -n "Enter the support e-mail to use for this server [$SUPPORT_EMAIL]: "
-read supportemail
-if [ -n "$supportemail" ]; then
-    SUPPORT_EMAIL="$supportemail"
-fi
-
 echo -n "Require account approval? [y/N] "
 read requireapproval
 if [ -n "$requireapproval" ]; then
-    REQUIRE_APPROVAL="$requireapproval"
+    if [[ "${requireapproval,,}" == "y" || "${requireapproval,,}" == "ye" || "${requireapproval,,}" == "yes" ]]; then
+        REQUIRE_APPROVAL="true"
+
+        # Prompt for the support email, which will be required to approve accounts
+        echo -n "Enter the e-mail address to use for account approval [$SUPPORT_EMAIL]: "
+        read supportemail
+        if [ -n "$supportemail" ]; then
+            SUPPORT_EMAIL="$supportemail"
+        fi
+    else
+        REQUIRE_APPROVAL="false"
+    fi
 fi
 
 echo "APISERVER_HOST=$APISERVER_HOST"
@@ -69,9 +74,30 @@ kubectl create -f templates/default-backend.yaml
 cat templates/default-ingress.yaml | ./mustache | kubectl create -f-
 kubectl label nodes 127.0.0.1 ndslabs-node-role=compute
 
-cat templates/gui.yaml | ./mustache | kubectl create -f-
+DEVENV=""
+echo -n "Start a development environment? [y/N] "
+read startdev
+if [[ "$startdev" == "y" || "$startdev" == "ye" || "$startdev" == "yes" ]]; then
+    DEVENV="ui"
+    cat templates/webui-dev.yaml | ./mustache | kubectl create -f-
+    cat templates/cloud9.yaml | ./mustache | kubectl create -f-
+else
+    cat templates/webui.yaml | ./mustache | kubectl create -f-
+fi
+
 cat templates/apiserver.yaml | ./mustache | kubectl create -f-
 
 echo "After the services start, you should be able to access the NDSLabs UI via:"
 echo "https://www.$DOMAIN"
 
+if [ "$DEVENV" != "" ]; then
+    echo "The developer environment assumes that you have the ndslabs source code checked out at /home/core/ndslabs"
+    echo "If your location differs, you can manually alter the templates for cloud9 and the webui"
+    echo ""
+
+    echo "After the developer environment starts, you should be able to access Cloud9 via:"
+    echo "https://cloud9.$DOMAIN"
+    echo ""
+
+    echo "If you have a basic-auth secret, those credentials will be required to authenticate into the developer environment"
+fi
