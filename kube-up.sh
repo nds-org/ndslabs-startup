@@ -1,10 +1,21 @@
 #!/bin/sh
 
 export K8S_VERSION=1.5.1
+
+#
+# Download kubectl
+#
+echo "Downloading kubectl binary to ~/bin..."
+mkdir -p ~/bin
+curl http://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/linux/amd64/kubectl -o ~/bin/kubectl
+chmod +x ~/bin/kubectl
+
 #
 # Start Kubernetes via Docker
 #
-docker run \
+echo ''
+echo 'Starting Hyperkube Kubelet...'
+(docker run \
     --volume=/:/rootfs:ro \
     --volume=/sys:/sys:ro \
     --volume=/var/lib/docker/:/var/lib/docker:rw \
@@ -24,8 +35,6 @@ docker run \
         --api-servers=http://localhost:8080 \
         --config=/etc/kubernetes/manifests \
 	--allow-privileged=true --v=2 \
-    || docker start kubelet
-
-mkdir -p ~/bin
-curl http://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/linux/amd64/kubectl -o ~/bin/kubectl
-chmod +x ~/bin/kubectl
+    || (echo '' && echo 'Starting previous Kubelet...' && docker start kubelet)) && echo 'Kubelet started successfully!'
+echo ''
+echo 'Kubernetes is starting!'
