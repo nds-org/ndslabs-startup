@@ -74,11 +74,9 @@ kubectl create -f templates/default-backend.yaml
 cat templates/default-ingress.yaml | ./mustache | kubectl create -f-
 kubectl label nodes 127.0.0.1 ndslabs-node-role=compute
 
-DEVENV=""
 echo -n "Start a development environment? [y/N] "
 read startdev
-if [[ "${startdev,,}" == "y" || "${startdev,,}" == "ye" || "${startdev,,}" == "yes" ]]; then
-    DEVENV="ui"
+if [[ -n "$startdev" && ("${startdev,,}" == "y" || "${startdev,,}" == "ye" || "${startdev,,}" == "yes") ]]; then
     cat templates/webui-dev.yaml | ./mustache | kubectl create -f-
     cat templates/cloud9.yaml | ./mustache | kubectl create -f-
 else
@@ -86,15 +84,13 @@ else
 fi
 
 cat templates/apiserver.yaml | ./mustache | kubectl create -f-
-
+echo ""
 echo "After the services start, you should be able to access the NDSLabs UI via:"
 echo "https://www.$DOMAIN"
 
-if [ "$DEVENV" != "" ]; then
+if [[ -n "$startdev" && ("${startdev,,}" == "y" || "${startdev,,}" == "ye" || "${startdev,,}" == "yes") ]]; then
     echo "The developer environment assumes that you have the ndslabs source code checked out at /home/core/ndslabs"
-    echo "If your location differs, you can manually alter the templates for cloud9 and the webui"
-    echo ""
-
+    echo "If your path differs, you can manually alter the templates for cloud9 and the webui"
     echo "After the developer environment starts, you should be able to access Cloud9 via:"
     echo "https://cloud9.$DOMAIN"
     echo ""
