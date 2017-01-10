@@ -77,7 +77,7 @@ kubectl label nodes 127.0.0.1 ndslabs-node-role=compute
 DEVENV=""
 echo -n "Start a development environment? [y/N] "
 read startdev
-if [[ "$startdev" == "y" || "$startdev" == "ye" || "$startdev" == "yes" ]]; then
+if [[ "${startdev,,}" == "y" || "${startdev,,}" == "ye" || "${startdev,,}" == "yes" ]]; then
     DEVENV="ui"
     cat templates/webui-dev.yaml | ./mustache | kubectl create -f-
     cat templates/cloud9.yaml | ./mustache | kubectl create -f-
