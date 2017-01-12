@@ -30,10 +30,9 @@ spec:
             path: "/home/core/ndslabs/gui/"
          name: src
       containers:
-      - name: webserver
-#        image: ndslabs/angular-ui:latest
-        image: bodom0015/angular-ui:NDS-507
-        imagePullPolicy: Never
+      - name: ndslabs-webui
+        image: ndslabs/angular-ui:latest
+        imagePullPolicy: IfNotPresent
         volumeMounts:
           - name: src
             mountPath: "/home/"

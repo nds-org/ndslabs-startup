@@ -26,9 +26,9 @@ spec:
         component: ndslabs-webui
     spec:
       containers:
-      - name: webserver
-        image: bodom0015/angular-ui:NDS-507
-        imagePullPolicy: Never
+      - name: ndslabs-webui
+        image: ndslabs/angular-ui:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
           protocol: TCP
