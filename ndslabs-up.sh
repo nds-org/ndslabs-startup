@@ -6,16 +6,17 @@
 
 IP_ADDR_MACHINE=$(ifconfig eth0  | grep "inet " | awk '{print $2}')
 
-echo -n "Enter the domain name for this server: "
+echo -n "Enter the domain name for this server [$DOMAIN]: "
 read domain
+if [ -n "$domain" ]; then
+    DOMAIN=$domain
+fi
 
-DOMAIN=$domain
-APISERVER_HOST="www.$domain"
-CORS_ORIGIN_ADDR="https://www.$domain"
+APISERVER_HOST="www.$DOMAIN"
+CORS_ORIGIN_ADDR="https://www.$DOMAIN"
 APISERVER_SECURE="true"
 APISERVER_PORT="443"
 INGRESS=LoadBalancer
-SUPPORT_EMAIL="your@email.com"
 REQUIRE_APPROVAL="false"
 
 echo -n "Enter the internal IP address for this server [$IP_ADDR_MACHINE]: "

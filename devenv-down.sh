@@ -1,9 +1,11 @@
 #!/bin/bash
 
-echo -n "Enter the domain name for this server: "
+echo -n "Enter the domain name for this server [$DOMAIN]: "
 read domain
-
-DOMAIN=$domain
+if [ -n "$domain" ]; then
+    DOMAIN=$domain
+fi
+export DOMAIN
 
 # Stop Dev version of webui and a cloud9 container
 kubectl delete svc,rc ndslabs-webui

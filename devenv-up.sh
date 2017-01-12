@@ -1,9 +1,12 @@
 #!/bin/bash
 
-echo -n "Enter the domain name for this server: "
+echo -n "Enter the domain name for this server [$DOMAIN]: "
 read domain
+if [ -n "$domain" ]; then
+    DOMAIN=$domain
+fi
 
-DOMAIN=$domain
+export DOMAIN
 
 # Notify user that source should be cloned to the correct location
 echo "The developer environment assumes that you have the ndslabs source code checked out at /home/core/ndslabs"
