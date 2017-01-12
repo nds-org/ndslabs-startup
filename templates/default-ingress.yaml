@@ -15,10 +15,6 @@ spec:
         backend:
           serviceName: ndslabs-apiserver
           servicePort: 30001
-      - path: /logs
-        backend:
-          serviceName: ndslabs-logserve
-          servicePort: 80
       - path: /
         backend:
           serviceName: ndslabs-webui
