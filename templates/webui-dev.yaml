@@ -48,5 +48,7 @@ spec:
             value: "/api"
           - name: APISERVER_SECURE
             value: "{{ APISERVER_SECURE }}"
+          - name: ANALYTICS_ACCOUNT
+            value: ""
           - name: SUPPORT_EMAIL
             value: "{{ SUPPORT_EMAIL }}"
