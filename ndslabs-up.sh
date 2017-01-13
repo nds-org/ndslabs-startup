@@ -1,47 +1,46 @@
 #!/bin/bash
 
+#
+# Start Labs Workbench 
+#
 
-UNAME=$(uname)
+IP_ADDR_MACHINE=$(ifconfig eth0  | grep "inet " | awk '{print $2}')
 
-if [ "$UNAME" == "Darwin" ]; then
-   echo "Assuming docker-machine"
-   IP_ADDR_MACHINE=$(docker-machine ip)
-   IP_ADDR_PUBLIC=$(docker-machine ip)
-elif [ "$UNAME" == "Linux" ]; then
-    IP_ADDR_MACHINE=$(ifconfig eth0  | grep "inet " | awk '{print $2}')
-    IP_ADDR_PUBLIC=$(curl -s https://api.ipify.org)
-fi
-
-echo -n "Enter the domain name for this server or ENTER to not configure: "
+echo -n "Enter the domain name for this server [$DOMAIN]: "
 read domain
-
-if [ -z "$domain" ]; then
-   echo -n "Enter the public IP address for this server [$IP_ADDR_PUBLIC] or ENTER to accept the default: "
-   read publicip
-   if [ -n "$publicip" ]; then 
-      IP_ADDR_PUBLIC=$publicip
-   fi
-   APISERVER_HOST="$IP_ADDR_PUBLIC"
-   APISERVER_PORT="30001"
-   APISERVER_SECURE="false"
-   CORS_ORIGIN_ADDR="http://$IP_ADDR_PUBLIC:30000"
-   INGRESS=NodePort
-else
-   DOMAIN=$domain
-   APISERVER_HOST="www.$domain"
-   CORS_ORIGIN_ADDR="https://www.$domain"
-   APISERVER_SECURE="true"
-   APISERVER_PORT="443"
-   INGRESS=LoadBalancer
+if [ -n "$domain" ]; then
+    DOMAIN=$domain
 fi
 
+APISERVER_HOST="www.$DOMAIN"
+CORS_ORIGIN_ADDR="https://www.$DOMAIN"
+APISERVER_SECURE="true"
+APISERVER_PORT="443"
+INGRESS=LoadBalancer
+REQUIRE_APPROVAL="false"
 
-echo -n "Enter the internal IP address for this server [$IP_ADDR_MACHINE] or ENTER to accept the default: "
+echo -n "Enter the internal IP address for this server [$IP_ADDR_MACHINE]: "
 read internalip
 if [ -n "$internalip" ]; then 
-    IP_ADDR_MACHINE=$internalip
+    IP_ADDR_MACHINE="$internalip"
 fi
 
+echo -n "Require account approval? [y/N] "
+read requireapproval
+if [ -n "$requireapproval" ]; then
+    if [[ "${requireapproval,,}" == "y" || "${requireapproval,,}" == "ye" || "${requireapproval,,}" == "yes" ]]; then
+        REQUIRE_APPROVAL="true"
+
+        # Prompt for the support email, which will be required to approve accounts
+        echo -n "Enter the e-mail address to use for account approval [$SUPPORT_EMAIL]: "
+        read supportemail
+        if [ -n "$supportemail" ]; then
+            SUPPORT_EMAIL="$supportemail"
+        fi
+    else
+        REQUIRE_APPROVAL="false"
+    fi
+fi
 
 echo "APISERVER_HOST=$APISERVER_HOST"
 echo "APISERVER_PORT=$APISERVER_PORT"
@@ -49,6 +48,8 @@ echo "APISERVER_SECURE=$APISERVER_SECURE"
 echo "CORS_ORIGIN_ADDR=$CORS_ORIGIN_ADDR"
 echo "INGRESS=$INGRESS"
 echo "DOMAIN=$DOMAIN"
+echo "SUPPORT_EMAIL=$SUPPORT_EMAIL"
+echo "REQUIRE_APPROVAL=$REQUIRE_APPROVAL"
 export APISERVER_HOST
 export APISERVER_PORT
 export APISERVER_SECURE
@@ -57,36 +58,26 @@ export INGRESS
 export DOMAIN
 export IP_ADDR_PUBLIC
 export IP_ADDR_MACHINE
+export SUPPORT_EMAIL
+export REQUIRE_APPROVAL
 
 
-kubectl label nodes 127.0.0.1 ndslabs-role=compute
-
-if [ -n "$DOMAIN" ]; then 
-    kubectl create secret generic ndslabs-tls-secret --from-file=tls.crt=certs/ndslabs.cert --from-file=tls.key=certs/ndslabs.key --namespace=default
-    kubectl create -f ndslabs/lambert/loadbalancer.yaml
-    kubectl create -f ndslabs/lambert/default-backend.yaml
-    cat ndslabs/lambert/default-ingress.yaml | ./mustache | kubectl create -f-
+if [ ! -f "certs/ndslabs.cert" ]; then
+   echo "Creating self-signed certificate for $DOMAIN"
+   mkdir -p certs
+   openssl genrsa 2048 > certs/ndslabs.key
+   openssl req -new -x509 -nodes -sha1 -days 3650 -subj "/C=US/ST=IL/L=Champaign/O=NCSA/OU=NDS/CN=*.$DOMAIN" -key "certs/ndslabs.key" -out "certs/ndslabs.cert"
 fi
 
+kubectl create secret generic ndslabs-tls-secret --from-file=tls.crt=certs/ndslabs.cert --from-file=tls.key=certs/ndslabs.key --namespace=default
+kubectl create -f templates/loadbalancer.yaml
+kubectl create -f templates/default-backend.yaml
+cat templates/default-ingress.yaml | ./mustache | kubectl create -f-
+kubectl label nodes 127.0.0.1 ndslabs-node-role=compute
 
-cat ndslabs/lambert/gui.yaml | ./mustache | kubectl create -f-
-cat ndslabs/lambert/apiserver.yaml | ./mustache | kubectl create -f-
+cat templates/apiserver.yaml | ./mustache | kubectl create -f-
+cat templates/webui.yaml | ./mustache | kubectl create -f-
 
-if [ -n "$DOMAIN" ]; then 
-    echo "After the services start, you should be able to access the NDSLabs UI via:"
-    echo "https://www.$DOMAIN"
-else
-    echo "After the services start, you should be able to access the NDSLabs UI via:"
-    echo "http://$IP_ADDR_PUBLIC:30000"
-fi
-
-mkdir -p ~/bin
-if [ ! -e ~/bin/ndslabsctl ]; then
-    echo "Downloading ndslabsctl to ~/bin"
-    if [ "$UNAME" == "Darwin" ]; then
-        curl -sL https://github.com/nds-org/ndslabs/releases/download/v1.0-alpha/ndslabsctl-darwin-amd64 -o ~/bin/ndslabsctl
-    elif [ "$UNAME" == "Linux" ]; then
-        curl -sL https://github.com/nds-org/ndslabs/releases/download/v1.0-alpha/ndslabsctl-linux-amd64 -o ~/bin/ndslabsctl
-    fi
-    chmod +x ~/bin/ndslabsctl
-fi
+echo ""
+echo "After the services start, you should be able to access the NDSLabs UI via:"
+echo "https://www.$DOMAIN"

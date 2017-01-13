@@ -8,5 +8,7 @@ sed \
     -e 's/{{ APISERVER_SECURE }}/'${APISERVER_SECURE}/g \
     -e 's?{{ CORS_ORIGIN_ADDR }}?'${CORS_ORIGIN_ADDR}?g \
     -e 's/{{ INGRESS }}/'${INGRESS}/g \
-    -e 's/{{ DOMAIN }}/'${DOMAIN}/g
+    -e 's/{{ DOMAIN }}/'${DOMAIN}/g \
+    -e 's/{{ SUPPORT_EMAIL }}/'${SUPPORT_EMAIL}/g \
+    -e 's/{{ REQUIRE_APPROVAL }}/'${REQUIRE_APPROVAL}/g
 

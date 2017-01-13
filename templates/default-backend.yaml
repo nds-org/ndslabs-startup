@@ -10,7 +10,7 @@ spec:
   ports:
     - port: 8080
       protocol: TCP
-----
+---
 apiVersion: v1
 kind: ReplicationController
 metadata:
@@ -47,5 +47,3 @@ spec:
           requests:
             cpu: 10m
             memory: 20Mi
-      nodeSelector:
-          ndslabs-node-role: loadbalancer

@@ -14,7 +14,7 @@ spec:
         app: nginx-ingress
     spec:
       containers:
-      - image: ndslabs/nginx-ingress-controller:local
+      - image: gcr.io/google_containers/nginx-ingress-controller:0.8.2
         imagePullPolicy: Always
         name: nginx-ingress
         ports:
@@ -37,5 +37,3 @@ spec:
         - --running-in-cluster=true
         - --healthz-port=9999
       hostNetwork: true
-      nodeSelector:
-          ndslabs-node-role: loadbalancer

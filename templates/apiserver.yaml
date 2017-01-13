@@ -10,9 +10,7 @@ spec:
   ports:
     - port: 30001
       protocol: TCP
-      nodePort: 30001
-  type: NodePort
-----
+---
 apiVersion: v1
 kind: ReplicationController
 metadata:
@@ -28,8 +26,10 @@ spec:
     spec:
       containers:
       - name: ndslabs-apiserver
-        image: ndslabs/apiserver:NDS-260
+        image: ndslabs/apiserver:latest
         imagePullPolicy: Always
+        securityContext:
+          privileged: true
         ports:
         - containerPort: 30001
           protocol: TCP
@@ -38,9 +38,9 @@ spec:
             mountPath: "/ndslabs/data/volumes"
         env:
           - name: ETCD_ADDR
-            value: "{{ IP_ADDR_MACHINE }}:2379"
+            value: "{{ IP_ADDR_MACHINE }}:4001"
           - name: KUBERNETES_ADDR
-            value: "https://{{ IP_ADDR_MACHINE }}:443"
+            value: "https://{{ IP_ADDR_MACHINE }}:6443"
           - name: CORS_ORIGIN_ADDR
             value: "{{ CORS_ORIGIN_ADDR }}"
           - name: SPEC_GIT_REPO
@@ -53,9 +53,15 @@ spec:
             value: "{{ DOMAIN }}"
           - name: VOLUME_PATH
             value: "/ndslabs/data/volumes"
+          - name: VOLUME_NAME
+            value: "global"
+          - name: SUPPORT_EMAIL
+            value: "{{ SUPPORT_EMAIL }}"
+          - name: REQUIRE_APPROVAL
+            value: "{{ REQUIRE_APPROVAL }}"
+          - name: SERVICE_TIMEOUT
+            value: "10"
       volumes:
        - hostPath:
             path: "/ndslabs/data/volumes"
          name: volumes
-      nodeSelector:
-          ndslabs-node-role: compute
