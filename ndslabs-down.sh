@@ -5,17 +5,11 @@
 #
 
 kubectl delete svc,rc ndslabs-apiserver
-kubectl delete svc,rc ndslabs-gui
+kubectl delete svc,rc ndslabs-webui
 kubectl delete svc,rc default-http-backend
 kubectl delete rc nginx-ilb-rc 
 kubectl delete ingress ndslabs-ingress
 kubectl delete secret ndslabs-tls-secret
-
-#
-# Stop Developer Environment
-#
-kubectl delete ing cloud9-ingress
-kubectl delete svc,rc cloud9
 
 #
 # Remove node label

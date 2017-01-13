@@ -6,16 +6,17 @@
 
 IP_ADDR_MACHINE=$(ifconfig eth0  | grep "inet " | awk '{print $2}')
 
-echo -n "Enter the domain name for this server: "
+echo -n "Enter the domain name for this server [$DOMAIN]: "
 read domain
+if [ -n "$domain" ]; then
+    DOMAIN=$domain
+fi
 
-DOMAIN=$domain
-APISERVER_HOST="www.$domain"
-CORS_ORIGIN_ADDR="https://www.$domain"
+APISERVER_HOST="www.$DOMAIN"
+CORS_ORIGIN_ADDR="https://www.$DOMAIN"
 APISERVER_SECURE="true"
 APISERVER_PORT="443"
 INGRESS=LoadBalancer
-SUPPORT_EMAIL="your@email.com"
 REQUIRE_APPROVAL="false"
 
 echo -n "Enter the internal IP address for this server [$IP_ADDR_MACHINE]: "
@@ -74,26 +75,9 @@ kubectl create -f templates/default-backend.yaml
 cat templates/default-ingress.yaml | ./mustache | kubectl create -f-
 kubectl label nodes 127.0.0.1 ndslabs-node-role=compute
 
-echo -n "Start a development environment? [y/N] "
-read startdev
-if [[ -n "$startdev" && ("${startdev,,}" == "y" || "${startdev,,}" == "ye" || "${startdev,,}" == "yes") ]]; then
-    cat templates/webui-dev.yaml | ./mustache | kubectl create -f-
-    cat templates/cloud9.yaml | ./mustache | kubectl create -f-
-else
-    cat templates/webui.yaml | ./mustache | kubectl create -f-
-fi
-
 cat templates/apiserver.yaml | ./mustache | kubectl create -f-
+cat templates/webui.yaml | ./mustache | kubectl create -f-
+
 echo ""
 echo "After the services start, you should be able to access the NDSLabs UI via:"
 echo "https://www.$DOMAIN"
-
-if [[ -n "$startdev" && ("${startdev,,}" == "y" || "${startdev,,}" == "ye" || "${startdev,,}" == "yes") ]]; then
-    echo "The developer environment assumes that you have the ndslabs source code checked out at /home/core/ndslabs"
-    echo "If your path differs, you can manually alter the templates for cloud9 and the webui"
-    echo "After the developer environment starts, you should be able to access Cloud9 via:"
-    echo "https://cloud9.$DOMAIN"
-    echo ""
-
-    echo "If you have a basic-auth secret, those credentials will be required to authenticate into the developer environment"
-fi
