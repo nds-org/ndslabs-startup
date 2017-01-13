@@ -10,7 +10,7 @@ spec:
   ports:
     - port: 30001
       protocol: TCP
-----
+---
 apiVersion: v1
 kind: ReplicationController
 metadata:
@@ -56,7 +56,9 @@ spec:
           - name: VOLUME_NAME
             value: "global"
           - name: SUPPORT_EMAIL
-            value: "you@email.com"
+            value: "{{ SUPPORT_EMAIL }}"
+          - name: REQUIRE_APPROVAL
+            value: "{{ REQUIRE_APPROVAL }}"
           - name: SERVICE_TIMEOUT
             value: "10"
       volumes:

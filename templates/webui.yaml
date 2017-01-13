@@ -11,7 +11,7 @@ spec:
     - port: 80
       targetPort: 8080
       protocol: TCP
-----
+---
 apiVersion: v1
 kind: ReplicationController
 metadata:
@@ -34,13 +34,15 @@ spec:
           protocol: TCP
         env:
           - name: APISERVER_HOST
-            value: {{ APISERVER_HOST }}
+            value: "{{ APISERVER_HOST }}"
           - name: APISERVER_PORT
             value: "{{ APISERVER_PORT }}"
           - name: APISERVER_PATH
             value: "/api"
           - name: APISERVER_SECURE
             value: "{{ APISERVER_SECURE }}"
+          - name: SUPPORT_EMAIL
+            value: "{{ SUPPORT_EMAIL }}"
         readinessProbe:
           httpGet:
             path: /asset/png/favicon-2-32x32.png
