@@ -8,6 +8,10 @@ fi
 
 export DOMAIN
 
+export APISERVER_HOST="www.$DOMAIN"
+export APISERVER_PORT=443
+export APISERVER_SECURE=true
+
 # Notify user that source should be cloned to the correct location
 echo "The developer environment assumes that you have the ndslabs source code checked out at /home/core/ndslabs"
 echo "If your path differs, you can manually alter the templates for cloud9 and the webui"
