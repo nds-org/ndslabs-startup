@@ -78,6 +78,8 @@ kubectl label nodes 127.0.0.1 ndslabs-node-role=compute
 cat templates/apiserver.yaml | ./mustache | kubectl create -f-
 cat templates/webui.yaml | ./mustache | kubectl create -f-
 
+kubectl create -f templates/nagios-nrpe-ds.yaml
+
 echo ""
 echo "After the services start, you should be able to access the NDSLabs UI via:"
 echo "https://www.$DOMAIN"
