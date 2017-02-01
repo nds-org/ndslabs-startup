@@ -31,7 +31,7 @@ spec:
          name: src
       containers:
       - name: ndslabs-webui
-        image: ndslabs/angular-ui:latest
+        image: ndslabs/angular-ui:1.0.7
         imagePullPolicy: IfNotPresent
         volumeMounts:
           - name: src
