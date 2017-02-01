@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
       - name: ndslabs-apiserver
-        image: ndslabs/apiserver:latest
+        image: ndslabs/apiserver:1.0.7
         imagePullPolicy: Always
         securityContext:
           privileged: true
