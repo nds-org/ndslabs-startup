@@ -5,10 +5,12 @@ export K8S_VERSION=1.5.1
 #
 # Download kubectl
 #
-echo "Downloading kubectl binary to ~/bin..."
-mkdir -p ~/bin
-curl http://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/linux/amd64/kubectl -o ~/bin/kubectl
-chmod +x ~/bin/kubectl
+if [ -z ~/bin/kubectl ]; then
+   echo "Downloading kubectl binary to ~/bin..."
+   mkdir -p ~/bin
+   curl http://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/linux/amd64/kubectl -o ~/bin/kubectl
+   chmod +x ~/bin/kubectl
+fi
 
 #
 # Start Kubernetes via Docker
