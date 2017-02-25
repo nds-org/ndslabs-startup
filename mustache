@@ -10,5 +10,7 @@ sed \
     -e 's/{{ INGRESS }}/'${INGRESS}/g \
     -e 's/{{ DOMAIN }}/'${DOMAIN}/g \
     -e 's/{{ SUPPORT_EMAIL }}/'${SUPPORT_EMAIL}/g \
+    -e 's/{{ WEBUI_GIT_DROPIN_REPO }}/'${WEBUI_GIT_DROPIN_REPO}/g \
+    -e 's/{{ WEBUI_GIT_DROPIN_BRANCH }}/'${WEBUI_GIT_DROPIN_BRANCH}/g \
     -e 's/{{ REQUIRE_APPROVAL }}/'${REQUIRE_APPROVAL}/g
 
