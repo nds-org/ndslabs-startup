@@ -46,9 +46,9 @@ spec:
           - name: SUPPORT_EMAIL
             value: "{{ SUPPORT_EMAIL }}"
           - name: GIT_DROPIN_REPO
-            value: "{{ WEBUI_GIT_DROPIN_REPO }}"
+            value: ""
           - name: GIT_DROPIN_BRANCH
-            value: "{{ WEBUI_GIT_DROPIN_BRANCH }}"
+            value: ""
         readinessProbe:
           httpGet:
             path: /asset/png/favicon-2-32x32.png
