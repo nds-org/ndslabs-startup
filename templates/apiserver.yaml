@@ -25,8 +25,17 @@ spec:
         component: ndslabs-apiserver
     spec:
       containers:
+      - name: data-provider
+        image: craigwillis/data-provider:NDS-748
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8083
+          protocol: TCP
+        volumeMounts:
+          - name: volumes
+            mountPath: "/var/glfs/global"
       - name: ndslabs-apiserver
-        image: ndslabs/apiserver:latest
+        image: craigwillis/apiserver:NDS-747
         imagePullPolicy: Always
         securityContext:
           privileged: true
@@ -35,7 +44,7 @@ spec:
           protocol: TCP
         volumeMounts:
           - name: volumes
-            mountPath: "/ndslabs/data/volumes"
+            mountPath: "/var/glfs/global"
         env:
           - name: ETCD_ADDR
             value: "{{ IP_ADDR_MACHINE }}:4001"
@@ -52,7 +61,7 @@ spec:
           - name: DOMAIN
             value: "{{ DOMAIN }}"
           - name: VOLUME_PATH
-            value: "/ndslabs/data/volumes"
+            value: "/var/glfs/global"
           - name: VOLUME_NAME
             value: "global"
           - name: SUPPORT_EMAIL
@@ -61,7 +70,13 @@ spec:
             value: "{{ REQUIRE_APPROVAL }}"
           - name: SERVICE_TIMEOUT
             value: "10"
+          - name: SHARED_VOLUME_PATH
+            value: "/clowder_data"
+          - name: SHARED_VOLUME_NAME
+            value: "/clowder_data"
+          - name: DATA_PROVIDER_URL
+            value: "http://localhost:8083"
       volumes:
        - hostPath:
-            path: "/ndslabs/data/volumes"
+            path: "/var/glfs/global"
          name: volumes
