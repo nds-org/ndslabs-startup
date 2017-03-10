@@ -3,12 +3,8 @@ kind: Ingress
 metadata:
   name: ndslabs-ingress
 spec:
-  tls:
-  - hosts:
-    - www.{{ DOMAIN }}
-    secretName: ndslabs-tls-secret
   rules:
-  - host: www.{{ DOMAIN }}
+  - host: www.terra-dev.ndslabs.org
     http:
       paths:
       - path: /api

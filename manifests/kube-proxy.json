@@ -14,7 +14,7 @@
         "command": [
                 "/hyperkube",
                 "proxy",
-                "--master=http://127.0.0.1:8080",
+                "--master=http://127.0.0.1:8081",
                 "--v=2",
                 "--resource-container=\"\""
         ],

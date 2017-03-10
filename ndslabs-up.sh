@@ -14,8 +14,8 @@ fi
 
 APISERVER_HOST="www.$DOMAIN"
 CORS_ORIGIN_ADDR="https://www.$DOMAIN"
-APISERVER_SECURE="true"
-APISERVER_PORT="443"
+APISERVER_SECURE="false"
+APISERVER_PORT="80"
 INGRESS=LoadBalancer
 REQUIRE_APPROVAL="false"
 
@@ -31,16 +31,16 @@ if [ -n "$requireapproval" ]; then
     if [[ "${requireapproval,,}" == "y" || "${requireapproval,,}" == "ye" || "${requireapproval,,}" == "yes" ]]; then
         REQUIRE_APPROVAL="true"
 
+    else
+        REQUIRE_APPROVAL="false"
+    fi
+fi
         # Prompt for the support email, which will be required to approve accounts
         echo -n "Enter the e-mail address to use for account approval [$SUPPORT_EMAIL]: "
         read supportemail
         if [ -n "$supportemail" ]; then
             SUPPORT_EMAIL="$supportemail"
         fi
-    else
-        REQUIRE_APPROVAL="false"
-    fi
-fi
 
 echo "APISERVER_HOST=$APISERVER_HOST"
 echo "APISERVER_PORT=$APISERVER_PORT"
@@ -69,7 +69,7 @@ if [ ! -f "certs/ndslabs.cert" ]; then
    openssl req -new -x509 -nodes -sha1 -days 3650 -subj "/C=US/ST=IL/L=Champaign/O=NCSA/OU=NDS/CN=*.$DOMAIN" -key "certs/ndslabs.key" -out "certs/ndslabs.cert"
 fi
 
-kubectl create secret generic ndslabs-tls-secret --from-file=tls.crt=certs/ndslabs.cert --from-file=tls.key=certs/ndslabs.key --namespace=default
+#kubectl create secret generic ndslabs-tls-secret --from-file=tls.crt=certs/ndslabs.cert --from-file=tls.key=certs/ndslabs.key --namespace=default
 kubectl create -f templates/loadbalancer.yaml
 kubectl create -f templates/default-backend.yaml
 cat templates/default-ingress.yaml | ./mustache | kubectl create -f-

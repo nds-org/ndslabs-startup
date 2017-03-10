@@ -29,7 +29,9 @@
     "volumes":[
       {
         "name": "varetcd",
-        "emptyDir": {}
+        "hostPath": {
+            "path": "/ndslabs/etcd/"
+        }
       }
     ]
   }

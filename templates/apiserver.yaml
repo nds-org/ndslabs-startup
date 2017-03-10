@@ -53,9 +53,9 @@ spec:
           - name: CORS_ORIGIN_ADDR
             value: "{{ CORS_ORIGIN_ADDR }}"
           - name: SPEC_GIT_REPO
-            value: "https://github.com/nds-org/ndslabs-specs.git"
+            value: "https://github.com/craig-willis/ndslabs-specs.git"
           - name: SPEC_GIT_BRANCH
-            value: "master"
+            value: "terra-ref"
           - name: INGRESS
             value: "{{ INGRESS }}"
           - name: DOMAIN
@@ -71,9 +71,9 @@ spec:
           - name: SERVICE_TIMEOUT
             value: "10"
           - name: SHARED_VOLUME_PATH
-            value: "/clowder_data"
+            value: "/home/clowder/sites"
           - name: SHARED_VOLUME_NAME
-            value: "/clowder_data"
+            value: "terraref"
           - name: DATA_PROVIDER_URL
             value: "http://localhost:8083"
       volumes:

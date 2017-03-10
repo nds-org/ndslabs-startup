@@ -32,7 +32,7 @@ echo 'Starting Hyperkube Kubelet...'
         --containerized \
         --hostname-override="127.0.0.1" \
         --address="0.0.0.0" \
-        --api-servers=http://localhost:8080 \
+        --api-servers=http://localhost:8081 \
         --config=/etc/kubernetes/manifests \
 	--allow-privileged=true --v=2 \
     || (echo '' && echo 'Starting previous Kubelet...' && docker start kubelet)) && echo 'Kubelet started successfully!'

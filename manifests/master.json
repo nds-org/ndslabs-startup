@@ -14,7 +14,7 @@
       "command": [
               "/hyperkube",
               "controller-manager",
-              "--master=127.0.0.1:8080",
+              "--master=127.0.0.1:8081",
               "--service-account-private-key-file=/srv/kubernetes/server.key",
               "--root-ca-file=/srv/kubernetes/ca.crt",
               "--min-resync-period=3m",
@@ -35,6 +35,7 @@
               "apiserver",
               "--service-cluster-ip-range=10.0.0.1/24",
               "--insecure-bind-address=127.0.0.1",
+              "--insecure-port=8081",
               "--etcd-servers=http://127.0.0.1:4001",
               "--admission-control=NamespaceLifecycle,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota",
               "--client-ca-file=/srv/kubernetes/ca.crt",
@@ -59,7 +60,7 @@
       "command": [
               "/hyperkube",
               "scheduler",
-              "--master=127.0.0.1:8080",
+              "--master=127.0.0.1:8081",
               "--v=2"
       ]
     },
