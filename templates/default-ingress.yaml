@@ -4,7 +4,7 @@ metadata:
   name: ndslabs-ingress
 spec:
   rules:
-  - host: www.terra-dev.ndslabs.org
+  - host: www.terraref.ndslabs.org
     http:
       paths:
       - path: /api

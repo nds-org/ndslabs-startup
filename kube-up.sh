@@ -16,6 +16,7 @@ chmod +x ~/bin/kubectl
 echo ''
 echo 'Starting Hyperkube Kubelet...'
 (docker run \
+    --restart=always \
     --volume=/:/rootfs:ro \
     --volume=/sys:/sys:ro \
     --volume=/var/lib/docker/:/var/lib/docker:rw \

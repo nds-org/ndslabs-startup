@@ -34,21 +34,21 @@ spec:
           protocol: TCP
         env:
           - name: APISERVER_HOST
-            value: "{{ APISERVER_HOST }}"
+            value: "www.terraref.ndslabs.org"
           - name: APISERVER_PORT
-            value: "{{ APISERVER_PORT }}"
+            value: "80"
           - name: APISERVER_PATH
             value: "/api"
           - name: APISERVER_SECURE
-            value: "{{ APISERVER_SECURE }}"
+            value: "false"
           - name: ANALYTICS_ACCOUNT
             value: ""
           - name: SUPPORT_EMAIL
-            value: "{{ SUPPORT_EMAIL }}"
+            value: "willis8@illinois.edu"
           - name: GIT_DROPIN_REPO
-            value: ""
+            value: "https://github.com/craig-willis/ndslabs"
           - name: GIT_DROPIN_BRANCH
-            value: ""
+            value: "terra"
         readinessProbe:
           httpGet:
             path: /asset/png/favicon-2-32x32.png

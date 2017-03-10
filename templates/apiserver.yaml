@@ -25,17 +25,8 @@ spec:
         component: ndslabs-apiserver
     spec:
       containers:
-      - name: data-provider
-        image: craigwillis/data-provider:NDS-748
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8083
-          protocol: TCP
-        volumeMounts:
-          - name: volumes
-            mountPath: "/var/glfs/global"
       - name: ndslabs-apiserver
-        image: craigwillis/apiserver:NDS-747
+        image: ndslabs/apiserver:latest
         imagePullPolicy: Always
         securityContext:
           privileged: true
@@ -44,39 +35,37 @@ spec:
           protocol: TCP
         volumeMounts:
           - name: volumes
-            mountPath: "/var/glfs/global"
+            mountPath: "/ndslabs/home"
         env:
           - name: ETCD_ADDR
-            value: "{{ IP_ADDR_MACHINE }}:4001"
+            value: "192.168.5.73:4001"
           - name: KUBERNETES_ADDR
-            value: "https://{{ IP_ADDR_MACHINE }}:6443"
+            value: "https://192.168.5.73:6443"
           - name: CORS_ORIGIN_ADDR
-            value: "{{ CORS_ORIGIN_ADDR }}"
+            value: "http://www.terraref.ndslabs.org"
           - name: SPEC_GIT_REPO
             value: "https://github.com/craig-willis/ndslabs-specs.git"
           - name: SPEC_GIT_BRANCH
             value: "terra-ref"
           - name: INGRESS
-            value: "{{ INGRESS }}"
+            value: "LoadBalancer"
           - name: DOMAIN
-            value: "{{ DOMAIN }}"
+            value: "terraref.ndslabs.org"
           - name: VOLUME_PATH
-            value: "/var/glfs/global"
+            value: "/ndslabs/home"
           - name: VOLUME_NAME
             value: "global"
           - name: SUPPORT_EMAIL
-            value: "{{ SUPPORT_EMAIL }}"
+            value: "willis8@illinois.edu"
           - name: REQUIRE_APPROVAL
-            value: "{{ REQUIRE_APPROVAL }}"
+            value: "false"
           - name: SERVICE_TIMEOUT
             value: "10"
           - name: SHARED_VOLUME_PATH
-            value: "/home/clowder/sites"
+            value: "/data/terraref/sites"
           - name: SHARED_VOLUME_NAME
             value: "terraref"
-          - name: DATA_PROVIDER_URL
-            value: "http://localhost:8083"
       volumes:
        - hostPath:
-            path: "/var/glfs/global"
+            path: "/ndslabs/home/"
          name: volumes
