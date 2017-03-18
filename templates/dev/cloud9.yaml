@@ -9,10 +9,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - cloud9.{{ DOMAIN }}
+    - cloud9.local.ndslabs.org
     secretName: ndslabs-tls-secret
   rules:
-  - host: cloud9.{{ DOMAIN }}
+  - host: cloud9.local.ndslabs.org
     http:
       paths:
       - path: /

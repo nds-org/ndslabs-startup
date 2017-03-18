@@ -44,7 +44,7 @@ spec:
           - name: ANALYTICS_ACCOUNT
             value: ""
           - name: SUPPORT_EMAIL
-            value: "lambert8@illinois.edu"
+            value: "bodom0015@gmail.com"
           - name: GIT_DROPIN_REPO
             value: ""
           - name: GIT_DROPIN_BRANCH

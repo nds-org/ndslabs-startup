@@ -33,4 +33,9 @@ spec:
         - containerPort: 25
           name: server
           protocol: TCP
+        env:
+          - name: GMAIL_USER
+            value: ""
+          - name: GMAIL_PASSWORD
+            value: ""
       restartPolicy: Always
