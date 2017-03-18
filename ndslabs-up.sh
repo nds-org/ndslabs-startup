@@ -4,7 +4,7 @@
 # Start Labs Workbench 
 #
 
-IP_ADDR_MACHINE=$(ifconfig eth0  | grep "inet " | awk '{print $2}')
+#IP_ADDR_MACHINE=$(ifconfig eth0  | grep "inet " | awk '{print $2}')
 
 echo -n "Enter the domain name for this server [$DOMAIN]: "
 read domain

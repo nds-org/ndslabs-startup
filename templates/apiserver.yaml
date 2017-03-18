@@ -64,9 +64,9 @@ spec:
           - name: TOKEN_PATH
             value: "/var/run/secrets/kubernetes.io/serviceaccount/token"
           - name: SMTP_HOST
-            value: "smtp.ncsa.illinois.edu"
+            value: "$(NDSLABS_SMTP_SERVICE_HOST)"
           - name: SMTP_TLS
-            value: "true"
+            value: "false"
       volumes:
        - hostPath:
             path: "/ndslabs/data/volumes"
