@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ndslabs-config
+  namespace: default
+data:
+  domain: local.ndslabs.org
+  apiserver_secure: true
+  apiserver_port: 443
+  require_approval: true
+
+  product_name: Labs Workbench
+  support_email: ndslabs-support@nationaldataservice.org
+
+  gmail_smtp_user: YourGmailUsername
+  gmail_smtp_pass: YourGeneratedGmailAppPassword
