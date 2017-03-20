@@ -8,12 +8,12 @@ ECHO='echo -e'
 if [ "${1,,}" == "down" ]; then
 # Remove kubelet first, or else it will continue to respawn killed containers
     $ECHO 'Stopping Kubelet...'
-    docker stop kubelet
+    docker stop kubelet >/dev/null 2>&1
  
     # Use at your own risk: stop and remove all k8s Docker containers
-    $ECHO 'Killing leftover Kubernetes resources...'
-    docker rm -f $(docker ps -a | grep k8s | awk  '{print $1}') >/dev/null
-    $ECHO '\nKubernetes is now shutdown!'
+    $ECHO 'Cleaning up leftover Kubernetes resources...'
+    docker rm -f $(docker ps -a | grep k8s | awk  '{print $1}') >/dev/null 2>&1 
+    $ECHO 'Kubernetes has been shutdown!'
 
     exit 0
 fi
@@ -67,7 +67,8 @@ $ECHO 'Starting Hyperkube Kubelet...'
         --api-servers=http://localhost:8080 \
         --config=/etc/kubernetes/manifests \
 	--allow-privileged=true --v=2 \
-    || docker start kubelet) >/dev/null
+        >/dev/null 2>&1 \
+    || docker start kubelet >/dev/null 2>&1)
 $ECHO 'Waiting for Kubernetes API server to start on port 8080...'
 
 #
