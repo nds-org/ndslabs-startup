@@ -9,15 +9,16 @@ if [ "${1,,}" == "down" ]; then
     $BINDIR/kubectl delete rc,svc ndslabs-webui ndslabs-apiserver ndslabs-etcd > /dev/null
 
     $ECHO 'Stopping Labs Workbench SMTP server...'
-    $BINDIR/kubectl delete rc,svc ndslabs-smtp > /dev/null
+    $BINDIR/kubectl delete rc,svc ndslabs-smtp
 
     $ECHO 'Stopping Labs Workbench LMA tools...'
-    $BINDIR/kubectl delete rc,svc nagios-nrpe > /dev/null
+    $BINDIR/kubectl delete rc,svc nagios-nrpe
 
     $ECHO 'Stopping Labs Workbench LoadBalancer...'
-    $BINDIR/kubectl delete rc,svc default-http-backend > /dev/null
-    $BINDIR/kubectl delete rc nginx-ilb-rc > /dev/null
-    $BINDIR/kubectl delete ingress default-ingress > /dev/null
+    $BINDIR/kubectl delete rc,svc default-http-backend
+    $BINDIR/kubectl delete rc nginx-ilb-rc
+    $BINDIR/kubectl delete ingress ndslabs-ingress
+    $BINDIR/kubectl delete configmap nginx-ingress-conf
 
     $ECHO 'Deleting Labs Workbench TLS Secret...'
     $BINDIR/kubectl delete secret ndslabs-tls-secret
