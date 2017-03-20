@@ -46,9 +46,9 @@ echo 'Starting Hyperkube Kubelet...'
 echo ''
 echo "Waiting for Kubernetes API server to start on port 8080..."
 
-until [ "$kube_output" == "No resources found." -o "${kube_output/NAME/}" != "$kube_output" ]; do   
-  sleep 1 # wait for 1/10 of the second before check again
-  kube_output=`kubectl get pods`
+until $(curl --output /dev/null --silent --head --fail http://localhost:8080); do   
+  sleep 5s # wait for 5s before checking again
+  kube_output=$(kubectl get pods)
 done
 
 echo 'Kubernetes has started!'
