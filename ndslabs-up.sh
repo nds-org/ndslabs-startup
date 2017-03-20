@@ -28,7 +28,7 @@ fi
 echo -n "Require account approval? [y/N] "
 read requireapproval
 if [ -n "$requireapproval" ]; then
-    if [[ "${requireapproval,,}" == "y" || "${requireapproval,,}" == "ye" || "${requireapproval,,}" == "yes" ]]; then
+    if [ "${requireapproval,,}" == "y" -o "${requireapproval,,}" == "ye" -o "${requireapproval,,}" == "yes" ]; then
         REQUIRE_APPROVAL="true"
 
         # Prompt for the support email, which will be required to approve accounts
