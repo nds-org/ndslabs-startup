@@ -38,10 +38,10 @@ spec:
             valueFrom:
               configMapKeyRef:
                 name: ndslabs-config
-                key: gmail_smtp_user
+                key: smtp.gmail_user
           - name: GMAIL_PASSWORD
             valueFrom:
               configMapKeyRef:
                 name: ndslabs-config
-                key: gmail_smtp_pass
+                key: smtp.gmail_pass
       restartPolicy: Always
