@@ -33,22 +33,42 @@ spec:
         - containerPort: 3000
           protocol: TCP
         env:
+          - name: DOMAIN
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: workbench.domain
+          - name: APISERVER_SECURE
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: tls.enable
+          - name: ANALYTICS_ACCOUNT
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: workbench.analytics_tracking_id
+          - name: SUPPORT_EMAIL
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: workbench.support_email
+          - name: GIT_DROPIN_REPO
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: git.dropin_repo
+          - name: GIT_DROPIN_BRANCH
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: git.dropin_branch
           - name: APISERVER_HOST
-            value: "www.local.ndslabs.org"
+            value: "www.$(DOMAIN)"
           - name: APISERVER_PORT
             value: ""
           - name: APISERVER_PATH
             value: "/api"
-          - name: APISERVER_SECURE
-            value: "false"
-          - name: ANALYTICS_ACCOUNT
-            value: ""
-          - name: SUPPORT_EMAIL
-            value: "bodom0015@gmail.com"
-          - name: GIT_DROPIN_REPO
-            value: ""
-          - name: GIT_DROPIN_BRANCH
-            value: ""
         readinessProbe:
           httpGet:
             path: /asset/png/favicon-2-32x32.png

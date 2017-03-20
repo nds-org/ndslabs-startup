@@ -35,7 +35,13 @@ spec:
           protocol: TCP
         env:
           - name: GMAIL_USER
-            value: ""
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: gmail_smtp_user
           - name: GMAIL_PASSWORD
-            value: ""
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: gmail_smtp_pass
       restartPolicy: Always
