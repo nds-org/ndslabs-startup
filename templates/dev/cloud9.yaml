@@ -1,21 +1,30 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: cloud9-ingress
+  name: cloud9
   annotations:
     ingress.kubernetes.io/auth-type: basic
     ingress.kubernetes.io/auth-secret: basic-auth
     ingress.kubernetes.io/auth-realm: "Authentication Required"
 spec:
   tls:
-  - hosts:
-    - cloud9.local.ndslabs.org
-    secretName: ndslabs-tls-secret
+    - secretName: ndslabs-tls-secret
   rules:
-  - host: cloud9.local.ndslabs.org
-    http:
+  - http:
       paths:
-      - path: /
+      - path: /vfs
+        backend:
+          serviceName: cloud9
+          servicePort: 80
+      - path: /static
+        backend:
+          serviceName: cloud9
+          servicePort: 80
+      - path: /configs
+        backend:
+          serviceName: cloud9
+          servicePort: 80
+      - path: /ide.html
         backend:
           serviceName: cloud9
           servicePort: 80

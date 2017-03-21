@@ -4,12 +4,9 @@ metadata:
   name: ndslabs-ingress
 spec:
   tls:
-  - hosts:
-    - www.local.ndslabs.org
-    secretName: ndslabs-tls-secret
+    - secretName: ndslabs-tls-secret
   rules:
-  - host: www.local.ndslabs.org
-    http:
+  - http:
       paths:
       - path: /api
         backend:

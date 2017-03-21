@@ -24,5 +24,7 @@ data:
   # To enable account approval, you need to configure the SMTP relay to use your GMail account to relay e-mails
   # See https://support.google.com/accounts/answer/185833?hl=en
   workbench.require_account_approval: "true"
+
+  # FIXME: this is probably insecure, and should likely be using a secret instead
   smtp.gmail_user: "YourGmailUsername"
   smtp.gmail_pass: "YourGeneratedGmailAppPassword"

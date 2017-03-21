@@ -6,7 +6,7 @@ ECHO='echo -e'
 
 # If "down" is given as the command, shut down hyperkube
 if [ "${1,,}" == "down" ]; then
-# Remove kubelet first, or else it will continue to respawn killed containers
+    # Remove kubelet first, or else it will continue to respawn killed containers
     $ECHO 'Stopping Kubelet...'
     docker stop kubelet >/dev/null 2>&1
  
@@ -20,18 +20,42 @@ fi
 
 # If "basic-auth" is passed as a command, regenerate the user's basic-auth secret 
 if [ "${1,,}" == "basic-auth" ]; then
-    $BINDIR/kubectl delete secret basic-auth -o name
+    kube_output="$($BINDIR/kubectl get secret -o name basic-auth 2>&1)"
+    if [ "$kube_output" == "secret/basic-auth" ]; then
+        read -p 'Secret "basic-auth" exists. Regenerate it? [y/N] ' regenerate
+        if [ "${regenerate:0:1}" == "y" -o "${regenerate:0:1}" == "Y" ]; then
+            $BINDIR/kubectl delete secret basic-auth
+        else
+            exit 1
+        fi
+    fi
 
-    $ECHO "Enter your desired username for basic auth: "
-    read username
+
+    read -p "Username: " username
     if [ ! -n "$username" ]; then
+        $ECHO 'No username entered... Aborting'
         exit 1
     fi
 
-    docker run --rm -ti crosbymichael/htpasswd $username && \
-    $ECHO "\nCopy the above line to a file named auth, then execute: " && \
-    $ECHO "kubectl create secret generic basic-auth --from-file=./auth\n"
+    read -s -p "Password: " password
+    if [ ! -n "$password" ]; then
+        $ECHO 'No password entered... Aborting'
+        exit 1
+    fi
+    $ECHO ""
 
+    read -s -p "Confirm password: " password_confirm
+    if [ ! -n "$password_confirm" -o "$password" != "$password_confirm" ]; then
+        $ECHO 'Passwords did not match.'
+        exit 1
+    fi
+    $ECHO ""
+
+    # Duplicate stdout
+    auth="$(docker run -it --rm bodom0015/htpasswd -b -c /dev/stdout $username $password | tail -1)" 
+    $BINDIR/kubectl create secret generic basic-auth --from-literal=auth="$auth" 
+    
+ 
     exit 0
 fi
 
@@ -43,6 +67,8 @@ if [ "${1,,}" == "deploy-tools" ]; then
     exit 0
 fi
 
+
+exit 0
 #
 # By default, start Kubernetes via Hyperkube
 #
