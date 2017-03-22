@@ -68,7 +68,6 @@ if [ "${1,,}" == "deploy-tools" ]; then
 fi
 
 
-exit 0
 #
 # By default, start Kubernetes via Hyperkube
 #
