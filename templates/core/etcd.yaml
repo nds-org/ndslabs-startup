@@ -27,7 +27,7 @@ spec:
         component: ndslabs-etcd
     spec:
       containers:
-      - image: gcr.io/google_containers/etcd-amd64:2.2.5
+      - image: ndslabs/etcd:2.2.5 
         command:
         - /usr/local/bin/etcd
         - --bind-addr=0.0.0.0:4001

@@ -11,8 +11,8 @@ if [ "${1,,}" == "down" ]; then
     docker stop kubelet >/dev/null 2>&1
  
     # Use at your own risk: stop and remove all k8s Docker containers
-    $ECHO 'Cleaning up leftover Kubernetes resources...'
-    docker rm -f $(docker ps -a | grep k8s | awk  '{print $1}') >/dev/null 2>&1 
+    $ECHO 'Cleaning up leftover Kubernetes resources... (your containers will not be harmed)'
+    docker rm -f $(docker ps -a | grep "gcr.io" | awk  '{print $1}') >/dev/null 2>&1 
     $ECHO 'Kubernetes has been shutdown!'
 
     exit 0
