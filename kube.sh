@@ -6,13 +6,23 @@ ECHO='echo -e'
 
 # If "down" is given as the command, shut down hyperkube
 if [ "${1,,}" == "down" ]; then
+    # Warn user of consequences
+    $ECHO 'WARNING: Shutting down Kubernetes will delete all containers running under Kubernetes?'
+    $ECHO 'This will DELETE ALL CONTAINER DATA that is not stored on a peristent volume mount.\n'
+
+    # Confirm that user knows what they're doing.
+    read -p 'Are you sure you want to continue? [y/N] ' confirm_shutdown
+    if [ "${confirm_shutdown:0:1}" != "y" -a "${confirm_shutdown:0:1}" != "Y" ]; then
+        exit 1
+    fi
+
     # Remove kubelet first, or else it will continue to respawn killed containers
     $ECHO 'Stopping Kubelet...'
     docker stop kubelet >/dev/null 2>&1
- 
+
     # Use at your own risk: stop and remove all k8s Docker containers
-    $ECHO 'Cleaning up leftover Kubernetes resources... (your containers will not be harmed)'
-    docker rm -f $(docker ps -a | grep "gcr.io" | awk  '{print $1}') >/dev/null 2>&1 
+    $ECHO 'Cleaning up leftover Kubernetes resources...'
+    docker rm -f $(docker ps -a | grep k8s | awk  '{print $1}') >/dev/null 2>&1
     $ECHO 'Kubernetes has been shutdown!'
 
     exit 0
@@ -23,11 +33,11 @@ if [ "${1,,}" == "basic-auth" ]; then
     kube_output="$($BINDIR/kubectl get secret -o name basic-auth 2>&1)"
     if [ "$kube_output" == "secret/basic-auth" ]; then
         read -p 'Secret "basic-auth" exists. Regenerate it? [y/N] ' regenerate
-        if [ "${regenerate:0:1}" == "y" -o "${regenerate:0:1}" == "Y" ]; then
-            $BINDIR/kubectl delete secret basic-auth
-        else
+        if [ "${regenerate:0:1}" != "y" -a "${regenerate:0:1}" != "Y" ]; then
             exit 1
         fi
+
+        $BINDIR/kubectl delete secret basic-auth
     fi
 
 
