@@ -4,9 +4,12 @@ metadata:
   name: ndslabs-ingress
 spec:
   tls:
-    - secretName: ndslabs-tls-secret
+  - hosts:
+    - www.{{ DOMAIN }}
+    secretName: ndslabs-tls-secret
   rules:
-  - http:
+  - host: www.{{ DOMAIN }}
+    http:
       paths:
       - path: /api
         backend:

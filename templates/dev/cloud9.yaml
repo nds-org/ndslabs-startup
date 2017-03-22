@@ -8,23 +8,14 @@ metadata:
     ingress.kubernetes.io/auth-realm: "Authentication Required"
 spec:
   tls:
-    - secretName: ndslabs-tls-secret
+  - hosts:
+    - cloud9.{{ DOMAIN }}
+    secretName: ndslabs-tls-secret
   rules:
-  - http:
+  - host: cloud9.{{ DOMAIN }}
+    http:
       paths:
-      - path: /vfs
-        backend:
-          serviceName: cloud9
-          servicePort: 80
-      - path: /static
-        backend:
-          serviceName: cloud9
-          servicePort: 80
-      - path: /configs
-        backend:
-          serviceName: cloud9
-          servicePort: 80
-      - path: /ide.html
+      - path: /
         backend:
           serviceName: cloud9
           servicePort: 80

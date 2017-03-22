@@ -26,7 +26,7 @@ spec:
     spec:
       volumes:
        - hostPath:
-            path: "/ndslabs/data/volumes"
+            path: "{{ VOLUME_PATH }}"
          name: volumes
       containers:
       - name: ndslabs-apiserver
@@ -39,14 +39,13 @@ spec:
           protocol: TCP
         volumeMounts:
           - name: volumes
-            mountPath: "/ndslabs/data/volumes"
+            mountPath: "{{ VOLUME_PATH }}"
         env:
-# We can't substitute configmap values into "volumes" or "volumeMounts" above
-# For this reason, volume name/path have been intentionally left out of the config map to prevent confusion
           - name: VOLUME_NAME
-            value: global
+            value: "global"
+          # We can't substitute configmap values into "volumes" or "volumeMounts" above - use a sketchy sed replacement
           - name: VOLUME_PATH
-            value: /ndslabs/data/volumes
+            value: "{{ VOLUME_PATH }}"
           - name: SUPPORT_EMAIL
             valueFrom:
               configMapKeyRef:
@@ -73,17 +72,13 @@ spec:
                 name: ndslabs-config
                 key: git.spec_branch
           - name: CORS_ORIGIN_ADDR
-            value: "http://www.$(DOMAIN)"
+            value: "https://www.$(DOMAIN)"
           - name: ETCD_ADDR
             value: "$(NDSLABS_ETCD_SERVICE_HOST):$(NDSLABS_ETCD_SERVICE_PORT)"
           - name: KUBERNETES_ADDR
             value: "https://$(KUBERNETES_SERVICE_HOST):$(KUBERNETES_SERVICE_PORT_HTTPS)"
           - name: INGRESS
             value: "LoadBalancer"
-          - name: VOLUME_NAME
-            value: global
-          - name: VOLUME_PATH
-            value: /ndslabs/data/volumes
           - name: SERVICE_TIMEOUT
             value: "10"
           - name: TOKEN_PATH

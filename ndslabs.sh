@@ -14,7 +14,10 @@ function start_all() {
 
     # Grab our DOMAIN from the configmap
     DOMAIN="$(cat templates/config.yaml | grep domain | awk '{print $2}' | sed s/\"//g)"
-    $ECHO "Starting Labs Workbench with DOMAIN=$DOMAIN"
+    VOLUME_PATH="$(cat templates/config.yaml | grep volume_path | awk '{print $2}' | sed s/\"//g)"
+    $ECHO "Starting Labs Workbench:"
+    $ECHO "    DOMAIN=$DOMAIN"
+    $ECHO "    VOLUME_PATH=${VOLUME_PATH}"
 
     # Generate self-signed TLS certs
     if [ ! -f "certs/ndslabs.cert" ]; then
@@ -32,36 +35,44 @@ function start_all() {
     $ECHO '\nStarting Labs Workbench LoadBalancer...'
     $BINDIR/kubectl create -f templates/ilb/loadbalancer.yaml
     $BINDIR/kubectl create -f templates/ilb/default-backend.yaml
-    $BINDIR/kubectl create -f templates/ilb/default-ingress.yaml
 
-    # Start SMTP server
+    # Start apiserver dependencies
     $ECHO '\nStarting Labs Workbench SMTP server...'
     $BINDIR/kubectl create -f templates/smtp/smtp.yaml
 
-    # Start core services (etcd, api, ui)
     $ECHO '\nStarting Labs Workbench core services...'
+    $BINDIR/kubectl create -f templates/core/etcd.yaml
+
+    # Label this as compute node, so that the ndslabs-apiserver can schedule pods here
     $BINDIR/kubectl label nodes 127.0.0.1 ndslabs-node-role=compute
-    $BINDIR/kubectl create -f templates/core/etcd.yaml -f templates/core/apiserver.yaml
+    
+    # Pre-process jinja-style variables by piping through sed
+    cat templates/ilb/default-ingress.yaml | sed -e "s#{{\s*DOMAIN\s*}}#${DOMAIN}#g" | kubectl create -f -
+    cat templates/core/apiserver.yaml | sed -e "s#{{\s*VOLUME_PATH\s*}}#${VOLUME_PATH}#g" | $BINDIR/kubectl create -f -
+    
+    # Don't start the webui if we were given --api-only
+    if [[ "${@/--api-only/ }" == "$@" ]]; then
+        $ECHO '\nStarting Labs Workbench UI...'
+        $BINDIR/kubectl create -f templates/core/webui.yaml
+    fi
 
     # Start NAGIOS Remote Plugin Executor
     $ECHO '\nStarting Labs Workbench LMA tools...'
     $BINDIR/kubectl create -f templates/lma/nagios-nrpe-ds.yaml
 
     # Wait for the API server to start
-    $ECHO 'Waiting for Labs Workbench API server to start...'
-    until $(curl --output /dev/null --silent --fail --header "Host: www.${DOMAIN}" localhost/api/); do
+    $ECHO '\nWaiting for Labs Workbench API server to start...'
+    until $(curl --output /dev/null --silent --fail --header "Host: www.$DOMAIN" localhost/api/); do
         $ECHO "Trying again in ${1} seconds..."
         sleep ${1}s # wait before checking again
     done
     $ECHO 'Labs Workbench API server successfully started!'
 
     if [[ "${@/--api-only/ }" == "$@" ]]; then
-        $ECHO '\nStarting Labs Workbench UI...'
-
         # Wait for the UI server to start
         $ECHO '\nWaiting for Labs Workbench UI server to start...'
         $ECHO '(NOTE: This can take a couple of minutes)'
-        until $(curl --output /dev/null --silent --fail --header "Host: www.${DOMAIN}" localhost/); do
+        until $(curl --output /dev/null --silent --fail --header "Host: www.$DOMAIN" localhost/); do
             $ECHO "Trying again in ${1} seconds..."
             sleep ${1}s # wait before checking again
         done
