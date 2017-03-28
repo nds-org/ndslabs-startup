@@ -7,6 +7,11 @@ This repository contains startup scripts to run the Labs Workbench services on a
 * Labs Workbench Angular UI and REST API Server
 * Cloud9 IDE for development
 
+## Minimum System Requirements
+* 2 CPUs
+* 2+ GB RAM
+* 40+ GB storage 
+
 ## Prerequisites
 * Git
 * Docker 1.9+
