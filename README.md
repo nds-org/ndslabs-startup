@@ -18,8 +18,10 @@ This repository contains startup scripts to run the Labs Workbench services on a
 * Wildcard DNS or etc hosts entry
 
 ## Configuration
-Set up desired instance parameters by editing the following ConfigMap:
+Clone this repo, then set up desired instance parameters by editing the following ConfigMap:
 ```
+git clone https://github.com/nds-org/ndslabs-startup
+cd ndslabs-startup/
 vi templates/config.yaml
 ```
 
@@ -57,7 +59,7 @@ git.dropin_repo: ""
 git.dropin_branch: ""
 ```
 
-## kube.sh
+## Kubernetes
 To start a local Kubernetes via hyperkube, simply run `./kube.sh`:
 ```
 ./kube.sh
@@ -71,7 +73,7 @@ With no command passed, this will automatically start all necessary Kubernetes s
 * `./kube.sh basic-auth`: Generate a new basic-auth secret for use with the development environment (see below)
 * `./kube.sh deploy-tools`: (DEPRECATED) Shortcut for running an ndslabs/deploy-tools container
 
-## ndslabs.sh
+## Labs Workbench
 To evaluate the Labs Workbench platform, simply run `./ndslabs.sh`:
 ```
 ./ndslabs.sh
@@ -87,7 +89,7 @@ NOTE: assumes wildcard DNS is available, but you can add individual /etc/hosts e
 * `./ndslabs.sh apipass`: Print the Admin Password of the currently running ndslabs-apiserver pod to the console
 * `./ndslabs.sh apipasswd`: Alias for `./ndslabs.sh apipass`
 
-## Development Environment
+## Development Environment (Optional)
 ```
 ./devenv.sh
 ```
