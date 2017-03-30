@@ -8,8 +8,6 @@ ECHO='echo -e'
 # $@ == all other args of parent are passed in (if "--api-only" is present, we skip starting the ui)
 function start_all() {
     # Ensure that Kubernetes is running
-    ./kube.sh
-
     $BINDIR/kubectl create -f templates/config.yaml >/dev/null 2>&1
 
     # Grab our DOMAIN from the configmap
@@ -36,8 +34,8 @@ function start_all() {
     $BINDIR/kubectl create -f templates/smtp/ -f templates/core/svc.yaml -f templates/core/etcd.yaml -f templates/core/apiserver.yaml
 
     # Label this as compute node, so that the ndslabs-apiserver can schedule pods here
-    $BINDIR/kubectl label nodes 127.0.0.1 ndslabs-node-role=compute
-    
+    nodename=$($BINDIR/kubectl get nodes | grep -v NAME | awk '{print $1}')
+    $BINDIR/kubectl label nodes ${nodename} ndslabs-node-role=compute
     
     # Don't start the webui if we were given --api-only
     if [[ "${@/--api-only/ }" == "$@" ]]; then
@@ -92,7 +90,9 @@ function stop_all() {
     $BINDIR/kubectl delete secret ndslabs-tls-secret --namespace=kube-system >/dev/null 2>&1
 
     # Remove node label
-    $BINDIR/kubectl label nodes 127.0.0.1 ndslabs-node-role- >/dev/null 2>&1
+    # Label this as compute node, so that the ndslabs-apiserver can schedule pods here
+    nodename=$($BINDIR/kubectl get nodes | grep -v NAME | awk '{print $1}')
+    $BINDIR/kubectl label nodes ${nodename} ndslabs-node-role- >/dev/null 2>&1
 
     # Remove Workbench ConfigMap
     $BINDIR/kubectl delete configmap ndslabs-config >/dev/null 2>&1
