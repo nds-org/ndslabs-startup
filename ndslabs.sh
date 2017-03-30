@@ -3,6 +3,8 @@
 export BINDIR="$HOME/bin"
 ECHO='echo -e'
 
+command="$(echo $1 | tr '[A-Z]' '[a-z]')"
+
 # Helper function to start all Labs Workbench services
 # $1 == seconds to wait between probe attempts
 # $@ == all other args of parent are passed in (if "--api-only" is present, we skip starting the ui)
@@ -100,10 +102,10 @@ function stop_all() {
     $ECHO 'All Labs Workbench services stopped!'
 }
 
-if [ "${1,,}" == "apipass" -o "${1,,}" == "apipasswd" ]; then
+if [ "$command" == "apipass" -o "$command" == "apipasswd" ]; then
     # If "apipass" or "apipasswd" is passed as the command, print the API server Admin Password to stdout
     kubectl exec -it `kubectl get pods | grep apiserver | grep Running | awk '{print $1}'` cat /password.txt
-elif [ "${1,,}" == "down" ]; then
+elif [ "$command" == "down" ]; then
     # If "down" is passed as the command, stop Labs Workbench
     stop_all
 else

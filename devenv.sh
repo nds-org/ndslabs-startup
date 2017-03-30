@@ -3,10 +3,12 @@
 export BINDIR="$HOME/bin"
 ECHO='echo -e'
 
+command="$(echo $1 | tr '[A-Z]' '[a-z]')"
+
 # Ensure that Kubernetes / Labs Workbench are running
 ./ndslabs.sh --api-only 
 
-if [ "${1,,}" == "down" ]; then
+if [ "$command" == "down" ]; then
     # Stop Dev version of webui and a cloud9 container
     $ECHO 'Stopping developer environment and UI...'
     $BINDIR/kubectl delete svc,rc ndslabs-webui
@@ -18,7 +20,7 @@ if [ "${1,,}" == "down" ]; then
 
 
 # If "basic-auth" is passed as a command, offer to regenerate the user's basic-auth secret 
-elif [ "${1,,}" == "basic-auth" ]; then
+elif [ "$command" == "basic-auth" ]; then
     kube_output="$($BINDIR/kubectl get secret -o name basic-auth 2>&1)"
     if [ "$kube_output" == "secret/basic-auth" ]; then
         read -p 'Secret "basic-auth" exists. Regenerate it? [y/N] ' regenerate

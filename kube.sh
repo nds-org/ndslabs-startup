@@ -1,11 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 
 export K8S_VERSION=1.5.1
 export BINDIR="$HOME/bin"
 ECHO='echo -e'
 
+command="$(echo $1 | tr '[A-Z]' '[a-z]')"
+
 # If "down" is given as the command, shut down hyperkube
-if [ "${1,,}" == "down" ]; then
+if [ "$command" == "down" ]; then
     # Warn user of consequences
     $ECHO 'WARNING: Shutting down Kubernetes will delete all containers running under Kubernetes?'
     $ECHO 'This will DELETE ALL CONTAINER DATA that is not stored on a peristent volume mount.\n'
@@ -29,17 +31,20 @@ if [ "${1,,}" == "down" ]; then
 fi
 
 # If "minikube" is passed as a command, run the "minikube start" command
-if [ "${1,,}" == "minikube" ]; then
-    minikube version || $ECHO 'Minikube binary must be installed to run Kubernetes Minikube. If you prefer to use minikube, please run ./kube.sh minikube command.' && exit 1
-    
+if [ "$command" == "minikube" ]; then
+    $ECHO 'Starting Kubernetes Minikube...' 
+    minikube version >/dev/null 2>&1 || ($ECHO 'Minikube binary must be installed to run Kubernetes Minikube. If you prefer to use hyperkube, please run ./kube.sh.' && exit 1)
+   
     minikube start
-    
+    $ECHO 'Kubernetes has started!'
+    $ECHO 'You can access your cluster using the kubectl binary.'    
+
     exit 0
 fi
 
 # If "deploy-tools" is passed as a command, start a container to remotely deploy Labs Workbench using Ansible
 # DEPRECATED: This will go away as we move toward kargo
-if [ "${1,,}" == "deploy-tools" ]; then
+if [ "$command" == "deploy-tools" ]; then
     docker run -it --name deploy-tools -v `pwd`/deploy-tools:/root/SAVED_AND_SENSITIVE_VOLUME ndslabs/deploy-tools:latest bash
 
     exit 0
@@ -50,7 +55,7 @@ fi
 # By default, start Kubernetes via Hyperkube
 #
 $ECHO 'Starting Hyperkube Kubelet...'
-docker --version || $ECHO 'Docker must be installed to run Kubernetes Hyperkube. If you prefer to use minikube, please run ./kube.sh minikube command.' && exit 1
+docker --version >/dev/null 2>&1 || $ECHO 'Docker must be installed to run Kubernetes Hyperkube. If you prefer to use minikube, please run ./kube.sh minikube command.' && exit 1
 (docker run \
     --volume=/:/rootfs:ro \
     --volume=/sys:/sys:ro \
