@@ -28,47 +28,6 @@ if [ "${1,,}" == "down" ]; then
     exit 0
 fi
 
-# If "basic-auth" is passed as a command, regenerate the user's basic-auth secret 
-if [ "${1,,}" == "basic-auth" ]; then
-    kube_output="$($BINDIR/kubectl get secret -o name basic-auth 2>&1)"
-    if [ "$kube_output" == "secret/basic-auth" ]; then
-        read -p 'Secret "basic-auth" exists. Regenerate it? [y/N] ' regenerate
-        if [ "${regenerate:0:1}" != "y" -a "${regenerate:0:1}" != "Y" ]; then
-            exit 1
-        fi
-
-        $BINDIR/kubectl delete secret basic-auth
-    fi
-
-
-    read -p "Username: " username
-    if [ ! -n "$username" ]; then
-        $ECHO 'No username entered... Aborting'
-        exit 1
-    fi
-
-    read -s -p "Password: " password
-    if [ ! -n "$password" ]; then
-        $ECHO 'No password entered... Aborting'
-        exit 1
-    fi
-    $ECHO ""
-
-    read -s -p "Confirm password: " password_confirm
-    if [ ! -n "$password_confirm" -o "$password" != "$password_confirm" ]; then
-        $ECHO 'Passwords did not match.'
-        exit 1
-    fi
-    $ECHO ""
-
-    # Duplicate stdout
-    auth="$(docker run -it --rm bodom0015/htpasswd -b -c /dev/stdout $username $password | tail -1)" 
-    $BINDIR/kubectl create secret generic basic-auth --from-literal=auth="$auth" 
-    
- 
-    exit 0
-fi
-
 # If "minikube" is passed as a command, run the "minikube start" command
 if [ "${1,,}" == "minikube" ]; then
     minikube version || $ECHO 'Minikube binary must be installed to run Kubernetes Minikube. If you prefer to use minikube, please run ./kube.sh minikube command.' && exit 1
