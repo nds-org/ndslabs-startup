@@ -30,18 +30,6 @@ if [ "$command" == "down" ]; then
     exit 0
 fi
 
-# If "minikube" is passed as a command, run the "minikube start" command
-if [ "$command" == "minikube" ]; then
-    $ECHO 'Starting Kubernetes Minikube...' 
-    minikube version >/dev/null 2>&1 || ($ECHO 'Minikube binary must be installed to run Kubernetes Minikube. If you prefer to use hyperkube, please run ./kube.sh.' && exit 1)
-   
-    minikube start
-    $ECHO 'Kubernetes has started!'
-    $ECHO 'You can access your cluster using the kubectl binary.'    
-
-    exit 0
-fi
-
 # If "deploy-tools" is passed as a command, start a container to remotely deploy Labs Workbench using Ansible
 # DEPRECATED: This will go away as we move toward kargo
 if [ "$command" == "deploy-tools" ]; then
@@ -55,7 +43,7 @@ fi
 # By default, start Kubernetes via Hyperkube
 #
 $ECHO 'Starting Hyperkube Kubelet...'
-docker --version >/dev/null 2>&1 || $ECHO 'Docker must be installed to run Kubernetes Hyperkube. If you prefer to use minikube, please run ./kube.sh minikube command.' && exit 1
+docker --version >/dev/null 2>&1 || $ECHO 'Docker must be installed to run Kubernetes Hyperkube. If you prefer to use minikube, please run minikube command.' && exit 1
 (docker run \
     --volume=/:/rootfs:ro \
     --volume=/sys:/sys:ro \
