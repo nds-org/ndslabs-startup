@@ -67,8 +67,8 @@ There are multiple ways to run a local single-node Kubernetes cluster.
 Two of the most popular methods are [MiniKube](https://github.com/kubernetes/minikube) and Hyperkube.
 
 ### Available Commands
-* `./kube.sh`: Bring up a local Kubernetes cluster with [hyperkube](https://github.com/kubernetes/community/blob/master/contributors/devel/local-cluster/docker.md) which uses Docker to run the other Kubernetes microservices as containers.
-* `./kube.sh minikube`: Bring up a local Kubernetes cluster with [minikube](https://kubernetes.io/docs/getting-started-guides/minikube/), which spawns a local VM running Kubernetes
+* `./kube.sh up`: Bring up a local Kubernetes cluster with [hyperkube](https://github.com/kubernetes/community/blob/master/contributors/devel/local-cluster/docker.md) which uses Docker to run the other Kubernetes microservices as containers.
+* `./kube.sh minikube`: Bring up a local Kubernetes cluster with [minikube](https://kubernetes.io/docs/getting-started-guides/minikube/), which spawns a local VM running Kubernetes. Assumes that you have minikube installed and working (requires VirtualBox).
 * `./kube.sh down`: Bring down all Kubernetes services and deletes all leftover Kuberenetes containers
 * `./kube.sh basic-auth`: Generate a new basic-auth secret for use with the development environment (see below)
 * `./kube.sh deploy-tools`: (DEPRECATED) Shortcut for running an ndslabs/deploy-tools container
