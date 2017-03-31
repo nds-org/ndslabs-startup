@@ -43,7 +43,7 @@ fi
 # By default, start Kubernetes via Hyperkube
 #
 $ECHO 'Starting Hyperkube Kubelet...'
-docker --version >/dev/null 2>&1 || $ECHO 'Docker must be installed to run Kubernetes Hyperkube. If you prefer to use minikube, please run minikube command.' && exit 1
+docker --version >/dev/null 2>&1 || ($ECHO 'Docker must be installed to run Kubernetes Hyperkube. If you prefer to use minikube, please run minikube command.' && exit 1)
 (docker run \
     --volume=/:/rootfs:ro \
     --volume=/sys:/sys:ro \
