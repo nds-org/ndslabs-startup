@@ -32,7 +32,7 @@ function start_all() {
 
     $ECHO '\nStarting Labs Workbench core services...'
     # Pre-process jinja-style variables by piping through sed
-    cat templates/core/loadbalancer.yaml | sed -e "s#{{\s*DOMAIN\s*}}#$DOMAIN#g" | kubectl create -f -
+    cat templates/core/loadbalancer.yaml | sed -e "s#{{[ ]*DOMAIN[ ]*}}#$DOMAIN#g" | kubectl create -f -
     $BINDIR/kubectl create -f templates/smtp/ -f templates/core/svc.yaml -f templates/core/etcd.yaml -f templates/core/apiserver.yaml
 
     # Label this as compute node, so that the ndslabs-apiserver can schedule pods here
@@ -51,7 +51,15 @@ function start_all() {
 
     # Wait for the API server to start
     $ECHO '\nWaiting for Labs Workbench API server to start...'
-    until $(curl --output /dev/null --silent --fail --header "Host: www.$DOMAIN" localhost/api/); do
+
+    BASE_URL=localhost
+    if  type "minikube" &> /dev/null  &&  minikube ip &> /dev/null ]]; then
+        BASE_URL=https://www.$DOMAIN/
+		$ECHO "\nDetected minikube instance, using $BASE_URL (requires /etc/hosts entry)\n"
+    fi
+
+     
+    until $(curl -k --output /dev/null --silent --fail --header "Host: www.$DOMAIN" $BASE_URL/api/); do
         $ECHO "Trying again in ${1} seconds..."
         sleep ${1}s # wait before checking again
     done
@@ -61,7 +69,7 @@ function start_all() {
         # Wait for the UI server to start
         $ECHO '\nWaiting for Labs Workbench UI server to start...'
         $ECHO '(NOTE: This can take a couple of minutes)'
-        until $(curl --output /dev/null --silent --fail --header "Host: www.$DOMAIN" localhost/); do
+        until $(curl -k --output /dev/null --silent --fail --header "Host: www.$DOMAIN" $BASE_URL/); do
             $ECHO "Trying again in ${1} seconds..."
             sleep ${1}s # wait before checking again
         done
