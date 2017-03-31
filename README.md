@@ -67,8 +67,7 @@ There are multiple ways to run a local single-node Kubernetes cluster.
 Two of the most popular methods are [MiniKube](https://github.com/kubernetes/minikube) and Hyperkube.
 
 ### Available Commands
-* `./kube.sh up`: Bring up a local Kubernetes cluster with [hyperkube](https://github.com/kubernetes/community/blob/master/contributors/devel/local-cluster/docker.md) which uses Docker to run the other Kubernetes microservices as containers.
-* `./kube.sh minikube`: Bring up a local Kubernetes cluster with [minikube](https://kubernetes.io/docs/getting-started-guides/minikube/), which spawns a local VM running Kubernetes. Assumes that you have minikube installed and working (requires VirtualBox).
+* `./kube.sh`: Bring up a local Kubernetes cluster with [hyperkube](https://github.com/kubernetes/community/blob/master/contributors/devel/local-cluster/docker.md) which uses Docker to run the other Kubernetes microservices as containers.
 * `./kube.sh down`: Bring down all Kubernetes services and deletes all leftover Kuberenetes containers
 * `./kube.sh basic-auth`: Generate a new basic-auth secret for use with the development environment (see below)
 * `./kube.sh deploy-tools`: (DEPRECATED) Shortcut for running an ndslabs/deploy-tools container
@@ -76,12 +75,15 @@ Two of the most popular methods are [MiniKube](https://github.com/kubernetes/min
 #### Via Minikube
 Minikube will run a local VM on your host machine that provides the Kubernetes services installed and running.
 
-First, you will need to download the [minikube](https://github.com/kubernetes/minikube) binary for your OS. Then, to start a local Kubernetes via minikube, simply run our provided `./kube.sh` with the appropriate command:
+First, you will need to download the [minikube](https://github.com/kubernetes/minikube) binary for your OS. Then, to start a local Kubernetes via minikube, simply run:
 ```
-./kube.sh minikube
+minikube start
 ```
 
-With the minikube container passed, this script just wraps around the `minikube start` command.
+To stop Kubernetes via minikube:
+```
+minikube stop
+```
 
 #### Via Hyperkube
 Hyperkube will run a local Kubernetes cluster in several Docker containers all running on the host.
@@ -99,13 +101,13 @@ To evaluate the Labs Workbench platform, simply run `./ndslabs.sh`:
 ./ndslabs.sh
 ```
 
-With no command passed, this will automatically start all necessary Kubernetes and Labs Workbench components.
+With no command passed, this will automatically start Labs Workbench components.
 
 NOTE: assumes wildcard DNS is available, but you can add individual /etc/hosts entries if needed.
 
 ### Available Commands
-* `./ndslabs.sh`: Start Kubernetes, then bring all ndslabs services online
-* `./ndslabs.sh down`: Bring down all ndslabs services (but leaves Kubernetes running)
+* `./ndslabs.sh`: Start workbench services
+* `./ndslabs.sh down`: Bring down all workbench services (but leaves Kubernetes running)
 * `./ndslabs.sh apipass`: Print the Admin Password of the currently running ndslabs-apiserver pod to the console
 * `./ndslabs.sh apipasswd`: Alias for `./ndslabs.sh apipass`
 
