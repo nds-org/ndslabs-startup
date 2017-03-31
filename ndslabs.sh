@@ -33,7 +33,7 @@ function start_all() {
     $ECHO '\nStarting Labs Workbench core services...'
     # Pre-process jinja-style variables by piping through sed
     cat templates/core/loadbalancer.yaml | sed -e "s#{{\s*DOMAIN\s*}}#$DOMAIN#g" | kubectl create -f -
-    $BINDIR/kubectl create -f templates/smtp/ -f templates/core/svc.yaml -f templates/core/etcd.yaml -f templates/core/apiserver.yaml
+    $BINDIR/kubectl create -f templates/smtp/ -f templates/core/svc.yaml -f templates/core/etcd.yaml -f templates/core/apiserver.yaml -f templates/core/bind.yaml
 
     # Label this as compute node, so that the ndslabs-apiserver can schedule pods here
     $BINDIR/kubectl label nodes 127.0.0.1 ndslabs-node-role=compute
@@ -96,8 +96,12 @@ function stop_all() {
 
     # Remove Workbench ConfigMap
     $BINDIR/kubectl delete configmap ndslabs-config >/dev/null 2>&1
+	 
+	# Stop bind/dns
+    $BINDIR/kubectl delete -f templaces/core/bind.yaml >/dev/null 2>&1
 
     $ECHO 'All Labs Workbench services stopped!'
+    $ECHO 'Remember to remove any DNS entries if using the Bind service'
 }
 
 if [ "${1,,}" == "apipass" -o "${1,,}" == "apipasswd" ]; then
