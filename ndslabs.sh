@@ -36,7 +36,7 @@ function start_all() {
     $BINDIR/kubectl create -f templates/smtp/ -f templates/core/svc.yaml -f templates/core/etcd.yaml -f templates/core/apiserver.yaml
 
     # Label this as compute node, so that the ndslabs-apiserver can schedule pods here
-    $BINDIR/kubectl label nodes 127.0.0.1 ndslabs-node-role=compute
+    $BINDIR/kubectl label nodes 127.0.0.1 ndslabs-role-compute=true
     
     
     # Don't start the webui if we were given --api-only
@@ -92,7 +92,7 @@ function stop_all() {
     $BINDIR/kubectl delete secret ndslabs-tls-secret --namespace=kube-system >/dev/null 2>&1
 
     # Remove node label
-    $BINDIR/kubectl label nodes 127.0.0.1 ndslabs-node-role- >/dev/null 2>&1
+    $BINDIR/kubectl label nodes 127.0.0.1 ndslabs-role-compute- >/dev/null 2>&1
 
     # Remove Workbench ConfigMap
     $BINDIR/kubectl delete configmap ndslabs-config >/dev/null 2>&1
