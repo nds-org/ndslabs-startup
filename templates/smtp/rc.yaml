@@ -21,6 +21,16 @@ spec:
           name: server
           protocol: TCP
         env:
+          - name: MAILNAME
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.host
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.port
           - name: GMAIL_USER
             valueFrom:
               configMapKeyRef:
@@ -31,4 +41,34 @@ spec:
               configMapKeyRef:
                 name: ndslabs-config
                 key: smtp.gmail_pass
+          - name: SES_USER
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.aws_ses_user
+          - name: SES_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.aws_ses_password
+          - name: SMARTHOST_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.smarthost_address
+          - name: SMARTHOST_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.smarthost_port
+          - name: SMARTHOST_USER
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.smarthost_user
+          - name: SMARTHOST_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.smarthost_password
       restartPolicy: Always
