@@ -30,5 +30,6 @@ spec:
           mountPath: /var/etcd
       restartPolicy: Always
       volumes:
-      - name: varetcd
-        emptyDir: {}
+       - hostPath:
+            path: "/ndslabs/data/etcd"
+         name: varetcd
