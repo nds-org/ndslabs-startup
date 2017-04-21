@@ -3,13 +3,13 @@
 export BINDIR="$HOME/bin"
 ECHO='echo -e'
 
+command="$(echo $1 | tr '[A-Z]' '[a-z]')"
+
 # Helper function to start all Labs Workbench services
 # $1 == seconds to wait between probe attempts
 # $@ == all other args of parent are passed in (if "--api-only" is present, we skip starting the ui)
 function start_all() {
     # Ensure that Kubernetes is running
-    ./kube.sh
-
     $BINDIR/kubectl create -f templates/config.yaml >/dev/null 2>&1
 
     # Grab our DOMAIN from the configmap
@@ -32,12 +32,12 @@ function start_all() {
 
     $ECHO '\nStarting Labs Workbench core services...'
     # Pre-process jinja-style variables by piping through sed
-    cat templates/core/loadbalancer.yaml | sed -e "s#{{\s*DOMAIN\s*}}#$DOMAIN#g" | kubectl create -f -
+    cat templates/core/loadbalancer.yaml | sed -e "s#{{[ ]*DOMAIN[ ]*}}#$DOMAIN#g" | kubectl create -f -
     $BINDIR/kubectl create -f templates/smtp/ -f templates/core/svc.yaml -f templates/core/etcd.yaml -f templates/core/apiserver.yaml
 
     # Label this as compute node, so that the ndslabs-apiserver can schedule pods here
-    $BINDIR/kubectl label nodes 127.0.0.1 ndslabs-role-compute=true
-    
+    nodename=$($BINDIR/kubectl get nodes | grep -v NAME | awk '{print $1}')
+    $BINDIR/kubectl label nodes ${nodename} ndslabs-role-compute=true
     
     # Don't start the webui if we were given --api-only
     if [[ "${@/--api-only/ }" == "$@" ]]; then
@@ -51,7 +51,15 @@ function start_all() {
 
     # Wait for the API server to start
     $ECHO '\nWaiting for Labs Workbench API server to start...'
-    until $(curl --output /dev/null --silent --fail --header "Host: www.$DOMAIN" localhost/api/); do
+
+    BASE_URL=localhost
+    if  type "minikube" &> /dev/null  &&  minikube ip &> /dev/null ]]; then
+        BASE_URL=https://www.$DOMAIN/
+		$ECHO "\nDetected minikube instance, using $BASE_URL (requires /etc/hosts entry)\n"
+    fi
+
+     
+    until $(curl -k --output /dev/null --silent --fail --header "Host: www.$DOMAIN" $BASE_URL/api/); do
         $ECHO "Trying again in ${1} seconds..."
         sleep ${1}s # wait before checking again
     done
@@ -61,7 +69,7 @@ function start_all() {
         # Wait for the UI server to start
         $ECHO '\nWaiting for Labs Workbench UI server to start...'
         $ECHO '(NOTE: This can take a couple of minutes)'
-        until $(curl --output /dev/null --silent --fail --header "Host: www.$DOMAIN" localhost/); do
+        until $(curl -k --output /dev/null --silent --fail --header "Host: www.$DOMAIN" $BASE_URL/); do
             $ECHO "Trying again in ${1} seconds..."
             sleep ${1}s # wait before checking again
         done
@@ -92,7 +100,8 @@ function stop_all() {
     $BINDIR/kubectl delete secret ndslabs-tls-secret --namespace=kube-system >/dev/null 2>&1
 
     # Remove node label
-    $BINDIR/kubectl label nodes 127.0.0.1 ndslabs-role-compute- >/dev/null 2>&1
+    nodename=$($BINDIR/kubectl get nodes | grep -v NAME | awk '{print $1}')
+    $BINDIR/kubectl label nodes  ${nodename} ndslabs-role-compute- >/dev/null 2>&1
 
     # Remove Workbench ConfigMap
     $BINDIR/kubectl delete configmap ndslabs-config >/dev/null 2>&1
@@ -100,10 +109,10 @@ function stop_all() {
     $ECHO 'All Labs Workbench services stopped!'
 }
 
-if [ "${1,,}" == "apipass" -o "${1,,}" == "apipasswd" ]; then
+if [ "$command" == "apipass" -o "$command" == "apipasswd" ]; then
     # If "apipass" or "apipasswd" is passed as the command, print the API server Admin Password to stdout
     kubectl exec -it `kubectl get pods | grep apiserver | grep Running | awk '{print $1}'` cat /password.txt
-elif [ "${1,,}" == "down" ]; then
+elif [ "$command" == "down" ]; then
     # If "down" is passed as the command, stop Labs Workbench
     stop_all
 else
