@@ -98,7 +98,7 @@ function stop_all() {
     $BINDIR/kubectl delete configmap ndslabs-config >/dev/null 2>&1
 	 
 	# Stop bind/dns
-    $BINDIR/kubectl delete -f templaces/core/bind.yaml >/dev/null 2>&1
+    $BINDIR/kubectl delete -f templates/core/bind.yaml >/dev/null 2>&1
 
     $ECHO 'All Labs Workbench services stopped!'
     $ECHO 'Remember to remove any DNS entries if using the Bind service'
