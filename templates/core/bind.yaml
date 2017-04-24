@@ -16,37 +16,45 @@ spec:
     app: ndslabs-bind
 ---
 apiVersion: v1
-kind: Pod
+kind: ReplicationController
 metadata:
-  labels:
-    app: ndslabs-bind
   name: ndslabs-bind
+  labels:
+    component: ndslabs-bind
 spec:
-  hostNetwork: true
-  containers:
-  - image: ndslabs/bind:latest
-    name: ndslabs-bind
-    env:
-    - name: EMAIL_ADDRESS
-      valueFrom:
-        configMapKeyRef:
-          name: ndslabs-config
-          key: workbench.support_email
-    - name: DOMAIN
-      valueFrom:
-        configMapKeyRef:
-          name: ndslabs-config
-          key: workbench.domain
-    - name: IP_ADDRESS
-      valueFrom:
-        configMapKeyRef:
-          name: ndslabs-config
-          key: workbench.ip
-    ports:
-    - containerPort: 53
-      name: bind1
-      protocol: UDP
-    - containerPort: 1000
-      name: bind2
-      protocol: TCP
-  restartPolicy: Never
+  replicas: 1
+  selector:
+    component: ndslabs-bind
+  template:
+    metadata:
+      labels:
+        component: ndslabs-bind
+    spec:
+      hostNetwork: true
+      containers:
+      - image: ndslabs/bind:latest
+        name: ndslabs-bind
+        env:
+        - name: EMAIL_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              name: ndslabs-config
+              key: workbench.support_email
+        - name: DOMAIN
+          valueFrom:
+            configMapKeyRef:
+              name: ndslabs-config
+              key: workbench.domain
+        - name: IP_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              name: ndslabs-config
+              key: workbench.ip
+        ports:
+        - containerPort: 53
+          name: bind1
+          protocol: UDP
+        - containerPort: 1000
+          name: bind2
+          protocol: TCP
+      restartPolicy: Always
