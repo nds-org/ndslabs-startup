@@ -37,7 +37,7 @@ function start_all() {
 
     # Label this as compute node, so that the ndslabs-apiserver can schedule pods here
     nodename=$($BINDIR/kubectl get nodes | grep -v NAME | awk '{print $1}')
-    $BINDIR/kubectl label nodes ${nodename} ndslabs-node-role=compute
+    $BINDIR/kubectl label nodes ${nodename} ndslabs-role-compute=true
     
     # Don't start the webui if we were given --api-only
     if [[ "${@/--api-only/ }" == "$@" ]]; then
@@ -100,9 +100,8 @@ function stop_all() {
     $BINDIR/kubectl delete secret ndslabs-tls-secret --namespace=kube-system >/dev/null 2>&1
 
     # Remove node label
-    # Label this as compute node, so that the ndslabs-apiserver can schedule pods here
     nodename=$($BINDIR/kubectl get nodes | grep -v NAME | awk '{print $1}')
-    $BINDIR/kubectl label nodes ${nodename} ndslabs-node-role- >/dev/null 2>&1
+    $BINDIR/kubectl label nodes  ${nodename} ndslabs-role-compute- >/dev/null 2>&1
 
     # Remove Workbench ConfigMap
     $BINDIR/kubectl delete configmap ndslabs-config >/dev/null 2>&1
