@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ndslabs-bind
+  labels:
+    component: ndslabs-bind
 spec:
   ports:
   - name: bind1
@@ -13,14 +15,12 @@ spec:
     protocol: TCP
     targetPort: 10000
   selector:
-    app: ndslabs-bind
+    component: ndslabs-bind
 ---
 apiVersion: v1
 kind: ReplicationController
 metadata:
   name: ndslabs-bind
-  labels:
-    component: ndslabs-bind
 spec:
   replicas: 1
   selector:
