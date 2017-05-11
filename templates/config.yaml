@@ -13,6 +13,9 @@ data:
   workbench.support_email: "ndslabs-support@nationaldataservice.org"
   workbench.analytics_tracking_id: ""
 
+  # IP address used by DNS service 
+  #workbench.ip: ""
+
   # Drop-in a customized Workbench UI
   git.dropin_repo: ""
   git.dropin_branch: ""
