@@ -70,9 +70,13 @@ else
     $ECHO '\nReplacing Labs Workbench UI with developer instance...'
     $BINDIR/kubectl delete svc,rc ndslabs-webui
 
+    # Grab our DOMAIN from the configmap
+    DOMAIN="$(cat templates/config.yaml | grep domain | awk '{print $2}' | sed s/\"//g)"
+    $ECHO "    DOMAIN=$DOMAIN"
+
     $ECHO '\nStarting developer environment and UI...'
     $BINDIR/kubectl create -f templates/dev/webui.yaml
-    cat templates/dev/cloud9.yaml | sed -e "s#{{\s*DOMAIN\s*}}#${DOMAIN}#g" | kubectl create -f -
+    cat templates/dev/cloud9.yaml | sed -e "s#{{[ ]*DOMAIN[ ]*}}#${DOMAIN}#g" | kubectl create -f -
 
     $ECHO '\nWaiting for Cloud9 developer environment to start...'
     until $(curl --output /dev/null --silent --fail --header "Host: cloud9.$DOMAIN" localhost/); do
