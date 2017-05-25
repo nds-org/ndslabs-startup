@@ -11,7 +11,7 @@ command="$(echo $1 | tr '[A-Z]' '[a-z]')"
 if [ "$command" == "down" ]; then
     # Stop Dev version of webui and a cloud9 container
     $ECHO 'Stopping developer environment and UI...'
-    $BINDIR/kubectl delete svc,rc ndslabs-webui
+    $BINDIR/kubectl delete rc ndslabs-webui
     $BINDIR/kubectl delete svc,rc,ing cloud9
 
     # Start production version of webui
@@ -68,7 +68,7 @@ else
 
     # Stop production version of webui, start dev one with cloud9
     $ECHO '\nReplacing Labs Workbench UI with developer instance...'
-    $BINDIR/kubectl delete svc,rc ndslabs-webui
+    $BINDIR/kubectl delete rc ndslabs-webui
 
     # Grab our DOMAIN from the configmap
     DOMAIN="$(cat templates/config.yaml | grep domain | awk '{print $2}' | sed s/\"//g)"
