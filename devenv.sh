@@ -3,22 +3,64 @@
 export BINDIR="$HOME/bin"
 ECHO='echo -e'
 
+command="$(echo $1 | tr '[A-Z]' '[a-z]')"
+
 # Ensure that Kubernetes / Labs Workbench are running
 ./ndslabs.sh --api-only 
 
-if [ "${1,,}" == "down" ]; then
+if [ "$command" == "down" ]; then
     # Stop Dev version of webui and a cloud9 container
     $ECHO 'Stopping developer environment and UI...'
-    $BINDIR/kubectl delete svc,rc ndslabs-webui
+    $BINDIR/kubectl delete rc ndslabs-webui
     $BINDIR/kubectl delete svc,rc,ing cloud9
 
     # Start production version of webui
     $ECHO 'Starting production Labs Workbench UI...'
     $BINDIR/kubectl create -f templates/core/webui.yaml
 
+
+# If "basic-auth" is passed as a command, offer to regenerate the user's basic-auth secret 
+elif [ "$command" == "basic-auth" ]; then
+    kube_output="$($BINDIR/kubectl get secret -o name basic-auth 2>&1)"
+    if [ "$kube_output" == "secret/basic-auth" ]; then
+        read -p 'Secret "basic-auth" exists. Regenerate it? [y/N] ' regenerate
+        if [ "${regenerate:0:1}" != "y" -a "${regenerate:0:1}" != "Y" ]; then
+            exit 1
+        fi
+
+        $BINDIR/kubectl delete secret basic-auth
+    fi
+
+
+    read -p "Username: " username
+    if [ ! -n "$username" ]; then
+        $ECHO 'No username entered... Aborting'
+        exit 1
+    fi
+
+    read -s -p "Password: " password
+    if [ ! -n "$password" ]; then
+        $ECHO 'No password entered... Aborting'
+        exit 1
+    fi
+    $ECHO ""
+
+    read -s -p "Confirm password: " password_confirm
+    if [ ! -n "$password_confirm" -o "$password" != "$password_confirm" ]; then
+        $ECHO 'Passwords did not match.'
+        exit 1
+    fi
+    $ECHO ""
+
+    # Duplicate stdout
+    auth="$(docker run -it --rm bodom0015/htpasswd -b -c /dev/stdout $username $password | tail -1)" 
+    $BINDIR/kubectl create secret generic basic-auth --from-literal=auth="$auth" 
+    
+ 
+    exit 0
 else
     # Ensure that user has created a basic-auth secret
-    $BINDIR/kubectl get secret basic-auth >/dev/null 2>&1 || $ECHO 'You will now be prompted for your desired credentials for basic-auth into Cloud9.' && ./kube.sh basic-auth
+    $BINDIR/kubectl get secret basic-auth >/dev/null 2>&1 || $ECHO 'You will now be prompted for your desired credentials for basic-auth into Cloud9.' && ./devenv.sh basic-auth
 
     # Notify user that source should be cloned to the correct location
     $ECHO "\nThe developer environment assumes that you have the ndslabs source code checked out at /home/core/ndslabs"
@@ -26,11 +68,15 @@ else
 
     # Stop production version of webui, start dev one with cloud9
     $ECHO '\nReplacing Labs Workbench UI with developer instance...'
-    $BINDIR/kubectl delete svc,rc ndslabs-webui
+    $BINDIR/kubectl delete rc ndslabs-webui
+
+    # Grab our DOMAIN from the configmap
+    DOMAIN="$(cat templates/config.yaml | grep domain | awk '{print $2}' | sed s/\"//g)"
+    $ECHO "    DOMAIN=$DOMAIN"
 
     $ECHO '\nStarting developer environment and UI...'
     $BINDIR/kubectl create -f templates/dev/webui.yaml
-    cat templates/dev/cloud9.yaml | sed -e "s#{{\s*DOMAIN\s*}}#${DOMAIN}#g" | kubectl create -f -
+    cat templates/dev/cloud9.yaml | sed -e "s#{{[ ]*DOMAIN[ ]*}}#${DOMAIN}#g" | kubectl create -f -
 
     $ECHO '\nWaiting for Cloud9 developer environment to start...'
     until $(curl --output /dev/null --silent --fail --header "Host: cloud9.$DOMAIN" localhost/); do
