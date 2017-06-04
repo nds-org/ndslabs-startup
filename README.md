@@ -123,3 +123,5 @@ It will then replace the running instace of ndslabs-webui with a version that re
 * `./devenv.sh`: Start Kubernetes and Labs Workbench services, then bring up a development environment to modify the UI source
 * `./devenv.sh down`: Bring down development environment and swap running UI with static image
 
+# Gotchas
+* Your node must have the label **ndslabs-role-compute=true** in order for the Labs Workbench API server to successfully schedule services there. NOTE: the `./ndslabs` script handles this for you, by default.

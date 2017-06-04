@@ -31,13 +31,14 @@ function start_all() {
     $BINDIR/kubectl create secret generic ndslabs-tls-secret --from-file=tls.crt="certs/${DOMAIN}.cert" --from-file=tls.key="certs/${DOMAIN}.key" --namespace=kube-system
 
     $ECHO '\nStarting Labs Workbench core services...'
+
     # Pre-process jinja-style variables by piping through sed
     cat templates/core/loadbalancer.yaml | sed -e "s#{{[ ]*DOMAIN[ ]*}}#$DOMAIN#g" | kubectl create -f -
-    $BINDIR/kubectl create -f templates/smtp/ -f templates/core/svc.yaml -f templates/core/etcd.yaml -f templates/core/apiserver.yaml
+    $BINDIR/kubectl create -f templates/smtp/ -f templates/core/svc.yaml -f templates/core/etcd.yaml -f templates/core/apiserver.yaml -f templates/core/bind.yaml
 
     # Label this as compute node, so that the ndslabs-apiserver can schedule pods here
     nodename=$($BINDIR/kubectl get nodes | grep -v NAME | awk '{print $1}')
-    $BINDIR/kubectl label nodes ${nodename} ndslabs-node-role=compute
+    $BINDIR/kubectl label nodes ${nodename} ndslabs-role-compute=true
     
     # Don't start the webui if we were given --api-only
     if [[ "${@/--api-only/ }" == "$@" ]]; then
@@ -100,14 +101,17 @@ function stop_all() {
     $BINDIR/kubectl delete secret ndslabs-tls-secret --namespace=kube-system >/dev/null 2>&1
 
     # Remove node label
-    # Label this as compute node, so that the ndslabs-apiserver can schedule pods here
     nodename=$($BINDIR/kubectl get nodes | grep -v NAME | awk '{print $1}')
-    $BINDIR/kubectl label nodes ${nodename} ndslabs-node-role- >/dev/null 2>&1
+    $BINDIR/kubectl label nodes  ${nodename} ndslabs-role-compute- >/dev/null 2>&1
 
     # Remove Workbench ConfigMap
     $BINDIR/kubectl delete configmap ndslabs-config >/dev/null 2>&1
+	 
+	# Stop bind/dns
+    $BINDIR/kubectl delete -f templates/core/bind.yaml >/dev/null 2>&1
 
     $ECHO 'All Labs Workbench services stopped!'
+    $ECHO 'Remember to remove any DNS entries if using the Bind service'
 }
 
 if [ "$command" == "apipass" -o "$command" == "apipasswd" ]; then
