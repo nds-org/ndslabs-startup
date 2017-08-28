@@ -15,13 +15,15 @@ spec:
       containers:
       - name: backup-shell
         imagePullPolicy: Always
-        image: bodom0015/cluster-backup:NDS-886-manual
+        image: ndslabs/cluster-backup:latest
         stdin: true
         tty: true
         env:
-         - name: CLUSTER_ID
-           value: mldev
-#           value: example
+          - name: CLUSTER_ID
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: workbench.domain
          - name: ETCD_HOST
            value: $(NDSLABS_ETCD_SERVICE_HOST)
          - name: ETCD_PORT
