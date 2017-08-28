@@ -5,7 +5,7 @@ metadata:
 spec:
 #  suspend: true
 #  schedule: "*/1 * * * *"
-  schedule: "0 0 0 * *"
+  schedule: "@daily"
   jobTemplate:
     spec:
       template:
@@ -13,8 +13,7 @@ spec:
           hostNetwork: true
           restartPolicy: OnFailure
           containers:
-#          - image: ndslabs/cluster-backup:latest
-            image: bodom0015/cluster-backup:NDS-886-manual
+          - image: ndslabs/cluster-backup:latest
             imagePullPolicy: Always
             name: cluster-backup
             command: [ "./backup.sh" ]
