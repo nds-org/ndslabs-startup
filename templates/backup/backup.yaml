@@ -13,11 +13,15 @@ spec:
           hostNetwork: true
           restartPolicy: OnFailure
           containers:
-          - image: ndslabs/cluster-backup:latest
+#          - image: ndslabs/cluster-backup:latest
+            image: bodom0015/cluster-backup:NDS-886-manual
             imagePullPolicy: Always
             name: cluster-backup
             command: [ "./backup.sh" ]
             env:
+             - name: CLUSTER_ID
+               value: mldev
+#               value: example
              - name: ETCD_HOST
                value: $(NDSLABS_ETCD_SERVICE_HOST)
              - name: ETCD_PORT
