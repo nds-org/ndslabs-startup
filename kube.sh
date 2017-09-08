@@ -1,13 +1,41 @@
 #!/bin/bash
-
 export K8S_VERSION=1.5.1
 export BINDIR="$HOME/bin"
 ECHO='echo -e'
+
+#
+# Download a copy of linux kubectl, if necessary
+#
+function download_kubectl() {
+  if [ ! -d "$BINDIR" ]; then
+      mkdir -p $BINDIR
+  fi
+
+  if [ ! -f /$BINDIR/kubectl ]; then
+      $ECHO "Downloading kubectl binary to $BINDIR..."
+      curl http://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/linux/amd64/kubectl -o ~/bin/kubectl
+      chmod +x ~/bin/kubectl
+
+      # TODO: Need an elegant way to add bins to PATH programmatically
+      export PATH="$BINDIR:$PATH"
+      $ECHO "Be sure to execute 'export PATH=$BINDIR:\$PATH' to add the directory contaning kubectl to your PATH."
+  fi
+}
+
+# Determine if kubectl is already installed. If not, download a copy
+export KUBECTL_BIN=$(which kubectl)
+if [ "$KUBECTL_BIN" == "" ]; then
+  download_kubectl
+  export KUBECTL_BIN="$BINDIR/kubectl"
+fi
+echo "KUBECTL $KUBECTL_BIN"
 
 command="$(echo $1 | tr '[A-Z]' '[a-z]')"
 if [ "$command" != "up" -a "$command" != "down" -a "$command" != "deploy-tools" ]; then
     echo "Usage: kube.sh up|down|deploy-tools"
 fi
+
+
 
 # If "down" is given as the command, shut down hyperkube
 if [ "$command" == "down" ]; then
@@ -83,12 +111,12 @@ if [ "$command" == "up" ]; then
     $ECHO "Be sure to execute 'export PATH=$BINDIR:\$PATH' to add the directory contaning kubectl to your PATH."
   fi
 
-  # Wait for Kubernetes to start
-  until $(curl --output /dev/null --silent --head --fail http://localhost:8080); do
-    $ECHO 'Trying again in 5 seconds...'
-    sleep 5s # wait for 5s before checking again
-    kube_output=$($BINDIR/kubectl get pods)
-  done
+# Wait for Kubernetes to start
+until $(curl --output /dev/null --silent --head --fail http://localhost:8080); do
+  $ECHO 'Trying again in 5 seconds...'
+  sleep 5s # wait for 5s before checking again
+  kube_output=$($KUBECTL_BIN get pods)
+done
 
   $ECHO 'Kubernetes has started!'
   $ECHO 'You can access your cluster using the kubectl binary.'

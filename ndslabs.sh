@@ -3,12 +3,39 @@
 export BINDIR="$HOME/bin"
 ECHO='echo -e'
 
+#
+# Download a copy of linux kubectl, if necessary
+#
+function download_kubectl() {
+  if [ ! -d "$BINDIR" ]; then
+      mkdir -p $BINDIR
+  fi
+
+  if [ ! -f /$BINDIR/kubectl ]; then
+      $ECHO "Downloading kubectl binary to $BINDIR..."
+      curl http://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/linux/amd64/kubectl -o ~/bin/kubectl
+      chmod +x ~/bin/kubectl
+
+      # TODO: Need an elegant way to add bins to PATH programmatically
+      export PATH="$BINDIR:$PATH"
+      $ECHO "Be sure to execute 'export PATH=$BINDIR:\$PATH' to add the directory contaning kubectl to your PATH."
+  fi
+}
+
+# Determine if kubectl is already installed. If not, download a copy
+export KUBECTL_BIN=$(which kubectl)
+if [ "$KUBECTL_BIN" == "" ]; then
+  download_kubectl
+  export KUBECTL_BIN="$BINDIR/kubectl"
+fi
+echo "KUBECTL $KUBECTL_BIN"
+
 # Helper function to start all Labs Workbench services
 # $1 == seconds to wait between probe attempts
 # $2 == Flag whether to start the UI too
 function start_all() {
   # Ensure that Kubernetes is running
-  $BINDIR/kubectl create -f templates/config.yaml >/dev/null 2>&1
+  $KUBECTL_BIN create -f templates/config.yaml >/dev/null 2>&1
 
   # Grab our DOMAIN from the configmap
   DOMAIN="$(cat templates/config.yaml | grep domain | awk '{print $2}' | sed s/\"//g)"
@@ -25,28 +52,34 @@ function start_all() {
 
   # Create secret from TLS certs
   $ECHO '\nGenerating Labs Workbench TLS Secret...'
-  $BINDIR/kubectl create secret generic ndslabs-tls-secret --from-file=tls.crt="certs/${DOMAIN}.cert" --from-file=tls.key="certs/${DOMAIN}.key" --namespace=default
-  $BINDIR/kubectl create secret generic ndslabs-tls-secret --from-file=tls.crt="certs/${DOMAIN}.cert" --from-file=tls.key="certs/${DOMAIN}.key" --namespace=kube-system
+  $KUBECTL_BIN create secret generic ndslabs-tls-secret --from-file=tls.crt="certs/${DOMAIN}.cert" --from-file=tls.key="certs/${DOMAIN}.key" --namespace=default
+  $KUBECTL_BIN create secret generic ndslabs-tls-secret --from-file=tls.crt="certs/${DOMAIN}.cert" --from-file=tls.key="certs/${DOMAIN}.key" --namespace=kube-system
 
   $ECHO '\nStarting Labs Workbench core services...'
 
   # Pre-process jinja-style variables by piping through sed
-  cat templates/core/loadbalancer.yaml | sed -e "s#{{[ ]*DOMAIN[ ]*}}#$DOMAIN#g" | kubectl create -f -
-  $BINDIR/kubectl create -f templates/smtp/ -f templates/core/svc.yaml -f templates/core/etcd.yaml -f templates/core/apiserver.yaml -f templates/core/bind.yaml
+  cat templates/core/loadbalancer.yaml | sed -e "s#{{[ ]*DOMAIN[ ]*}}#$DOMAIN#g" | $KUBECTL_BIN create -f -
+  $KUBECTL_BIN create -f templates/smtp/ -f templates/core/svc.yaml -f templates/core/etcd.yaml -f templates/core/apiserver.yaml
+
+  # Only start bind if requested
+  if [ "$3" == YES ]; then
+    cat templates/core/loadbalancer.yaml | sed -e "s#{{[ ]*DOMAIN[ ]*}}#$DOMAIN#g" | $KUBECTL_BIN create -f -
+    $KUBECTL_BIN create -f templates/core/bind.yaml
+  fi
 
   # Label this as compute node, so that the ndslabs-apiserver can schedule pods here
-  nodename=$($BINDIR/kubectl get nodes | grep -v NAME | awk '{print $1}')
-  $BINDIR/kubectl label nodes ${nodename} ndslabs-role-compute=true
+  nodename=$($KUBECTL_BIN get nodes | grep -v NAME | awk '{print $1}')
+  $KUBECTL_BIN label nodes ${nodename} ndslabs-role-compute=true
 
   # Don't start the ui if not required by user
   if [ "$2" == YES ]; then
     $ECHO '\nStarting Labs Workbench UI...'
-    $BINDIR/kubectl create -f templates/core/webui.yaml
+    $KUBECTL_BIN create -f templates/core/webui.yaml
   fi
 
   # TODO: Add support/options for LMA stuff
   # $ECHO '\nStarting Labs Workbench LMA tools...'
-  # $BINDIR/kubectl create -f templates/lma/nagios-nrpe-ds.yaml
+  # $KUBECTL_BIN create -f templates/lma/nagios-nrpe-ds.yaml
 
   # Wait for the API server to start
   $ECHO '\nWaiting for Labs Workbench API server to start...'
@@ -82,30 +115,30 @@ function start_all() {
 function stop_all() {
   # TODO: Add support/options for LMA stuff
   # $ECHO 'Stopping Labs Workbench LMA tools...'
-  # $BINDIR/kubectl delete ds --namespace=kube-system nagios-nrpe >/dev/null 2>&1
+  # $KUBECTL_BIN delete ds --namespace=kube-system nagios-nrpe >/dev/null 2>&1
 
   $ECHO 'Stopping Labs Workbench UI and API'
-  $BINDIR/kubectl delete rc,svc ndslabs-webui ndslabs-apiserver >/dev/null 2>&1
+  $KUBECTL_BIN delete rc,svc ndslabs-webui ndslabs-apiserver >/dev/null 2>&1
 
   $ECHO 'Stopping Labs Workbench core services...'
-  $BINDIR/kubectl delete rc,svc ndslabs-etcd ndslabs-smtp default-http-backend >/dev/null 2>&1
-  $BINDIR/kubectl delete rc nginx-ilb-rc >/dev/null 2>&1
-  $BINDIR/kubectl delete ingress ndslabs-ingress >/dev/null 2>&1
-  $BINDIR/kubectl delete configmap nginx-ingress-conf >/dev/null 2>&1
+  $KUBECTL_BIN delete rc,svc ndslabs-etcd ndslabs-smtp default-http-backend >/dev/null 2>&1
+  $KUBECTL_BIN delete rc nginx-ilb-rc >/dev/null 2>&1
+  $KUBECTL_BIN delete ingress ndslabs-ingress >/dev/null 2>&1
+  $KUBECTL_BIN delete configmap nginx-ingress-conf >/dev/null 2>&1
 
   $ECHO 'Deleting Labs Workbench TLS Secret...'
-  $BINDIR/kubectl delete secret ndslabs-tls-secret --namespace=default >/dev/null 2>&1
-  $BINDIR/kubectl delete secret ndslabs-tls-secret --namespace=kube-system >/dev/null 2>&1
+  $KUBECTL_BIN delete secret ndslabs-tls-secret --namespace=default >/dev/null 2>&1
+  $KUBECTL_BIN delete secret ndslabs-tls-secret --namespace=kube-system >/dev/null 2>&1
 
   # Remove node label
-  nodename=$($BINDIR/kubectl get nodes | grep -v NAME | awk '{print $1}')
-  $BINDIR/kubectl label nodes ${nodename} ndslabs-role-compute- >/dev/null 2>&1
+  nodename=$($KUBECTL_BIN get nodes | grep -v NAME | awk '{print $1}')
+  $KUBECTL_BIN label nodes ${nodename} ndslabs-role-compute- >/dev/null 2>&1
 
   # Remove Workbench ConfigMap
-  $BINDIR/kubectl delete configmap ndslabs-config >/dev/null 2>&1
+  $KUBECTL_BIN delete configmap ndslabs-config >/dev/null 2>&1
 
   # Stop bind/dns
-  $BINDIR/kubectl delete -f templates/core/bind.yaml >/dev/null 2>&1
+  $KUBECTL_BIN delete -f templates/core/bind.yaml >/dev/null 2>&1
 
   $ECHO 'All Labs Workbench services stopped!'
   $ECHO 'Remember to remove any DNS entries if using the Bind service'
@@ -113,7 +146,7 @@ function stop_all() {
 
 # Extract the API password from the api password and print to the console
 function print_api_password() {
-  kubectl exec -it $(kubectl get pods | grep apiserver | grep Running | awk '{print $1}') cat /password.txt
+  $KUBECTL_BIN exec -it $($KUBECTL_BIN get pods | grep apiserver | grep Running | awk '{print $1}') cat /password.txt
 }
 
 # Default command line options
@@ -149,11 +182,6 @@ for i in "$@"; do
       ;;
   esac
 done
-
-if [ ! -f /$BINDIR/kubectl ]; then
-    echo "kubectl not found. Please run kube.sh to install"
-    exit
-fi
 
 case $OPERATION in
   PRINT-PASSWORD)
