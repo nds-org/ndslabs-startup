@@ -131,6 +131,11 @@ ndslabs-apiserver pod to the console
 ### Command line options
 * `--no-ui`: Start up the API and supporting services, but don't launch the web
 service
+* `--start-bind`: Start up a local bind server to host wildcard domains on the
+local workstation. This is not needed if you are running with an external DNS
+that has wildcard domains (`*.foo.com`) pointing to the host that is running
+the workstation.
+
 
 ## Development Environment (Optional)
 ```

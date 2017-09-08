@@ -33,6 +33,7 @@ echo "KUBECTL $KUBECTL_BIN"
 # Helper function to start all Labs Workbench services
 # $1 == seconds to wait between probe attempts
 # $2 == Flag whether to start the UI too
+# $3 == Flag whether to start our own bind service
 function start_all() {
   # Ensure that Kubernetes is running
   $KUBECTL_BIN create -f templates/config.yaml >/dev/null 2>&1
@@ -176,6 +177,11 @@ for i in "$@"; do
       shift # past argument with no value
       ;;
 
+    --start-bind)
+      START_BIND=YES
+      shift # past argument with no value
+      ;;
+
     *) # unknown option
       echo "Unknown commnad line option: $i"
       exit
@@ -193,11 +199,11 @@ case $OPERATION in
     ;;
 
   UP)
-    start_all 15 $START_UI
+    start_all 15 $START_UI $START_BIND
     ;;
 
   *)
-    echo "Usage: ndslabs.sh up|down|print-passwd  [--no-ui]"
+    echo "Usage: ndslabs.sh up|down|print-passwd  [--no-ui] [--start-bind]"
     ;;
 esac
 exit 0
