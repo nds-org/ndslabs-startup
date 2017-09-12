@@ -29,32 +29,12 @@ vi templates/config.yaml
 
 ### Configuration Options
 Within `templates/config.yaml` you can customize your instance of workbench with
-the following options:
-```
-# Enable TLS (recommended)
-tls.enable: "true"
+several options. The only required change is to set `workbench.domain` domain to
+match wildcarded domain hosted on your server.
 
-# Enable account approval by configuring a target SMTP server, or use our provided G-Mail relay
-workbench.require_account_approval: "false"
-
-# To use the G-Mail SMTP relay, you will need to provide a set of credentials
-# See https://support.google.com/accounts/answer/185833?hl=en
-smtp.gmail_user: "YourGmailUsername"
-smtp.gmail_pass: "YouGeneratedAppPassword"
-
-# Customize the product name as it appears in the UI
-workbench.name: "Labs Workbench"
-
-# Customize support e-mail that help requests are sent to
-workbench.support_email: "support@example.com"
-
-# Customize Google Analytics tracking ID
-workbench.analytics_tracking_id: ""
-
-# Customize the JSON catalog of tools offered by this instance
-git.spec_repo: "https://github.com/nds-org/ndslabs-specs.git"
-git.spec_branch: "master"
-```
+In the case where a local bind is needed, you'd need to set `workbench.ip` to
+point an IP that your browser can access, then modify your local /etc/hosts and
+DNS settings to point to this same IP).
 
 ### Advanced Customization
 For futher customization, you can fork the entire [ndslabs
