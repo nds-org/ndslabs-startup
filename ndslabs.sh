@@ -3,11 +3,9 @@
 export BINDIR="$HOME/bin"
 ECHO='echo -e'
 
-command="$(echo $1 | tr '[A-Z]' '[a-z]')"
-
 # Helper function to start all Labs Workbench services
 # $1 == seconds to wait between probe attempts
-# $@ == all other args of parent are passed in (if "--api-only" is present, we skip starting the ui)
+# $2 == Flag whether to start the UI too
 function start_all() {
   # Ensure that Kubernetes is running
   $BINDIR/kubectl create -f templates/config.yaml >/dev/null 2>&1
@@ -40,8 +38,8 @@ function start_all() {
   nodename=$($BINDIR/kubectl get nodes | grep -v NAME | awk '{print $1}')
   $BINDIR/kubectl label nodes ${nodename} ndslabs-role-compute=true
 
-  # Don't start the webui if we were given --api-only
-  if [[ "${@/--api-only/ }" == "$@" ]]; then
+  # Don't start the ui if not required by user
+  if [ "$2" == YES ]; then
     $ECHO '\nStarting Labs Workbench UI...'
     $BINDIR/kubectl create -f templates/core/webui.yaml
   fi
@@ -65,7 +63,7 @@ function start_all() {
   done
   $ECHO 'Labs Workbench API server successfully started!'
 
-  if [[ "${@/--api-only/ }" == "$@" ]]; then
+  if [ "$2" == YES ]; then
     # Wait for the UI server to start
     $ECHO '\nWaiting for Labs Workbench UI server to start...'
     $ECHO '(NOTE: This can take a couple of minutes)'
@@ -113,15 +111,65 @@ function stop_all() {
   $ECHO 'Remember to remove any DNS entries if using the Bind service'
 }
 
-if [ "$command" == "apipass" -o "$command" == "apipasswd" ]; then
-  # If "apipass" or "apipasswd" is passed as the command, print the API server Admin Password to stdout
+# Extract the API password from the api password and print to the console
+function print_api_password() {
   kubectl exec -it $(kubectl get pods | grep apiserver | grep Running | awk '{print $1}') cat /password.txt
-elif [ "$command" == "down" ]; then
-  # If "down" is passed as the command, stop Labs Workbench
-  stop_all
-else
-  # By default and for all other command, start Labs Workbench
-  start_all "15" $@
+}
+
+# Default command line options
+START_BIND=NO
+START_UI=YES
+
+# Parse command line options and requested operation
+for i in "$@"; do
+  case $i in
+    up)
+      OPERATION=UP
+      shift # past argument with no value
+      ;;
+
+    down)
+      OPERATION=DOWN
+      shift # past argument with no value
+      ;;
+
+    print-passwd | apipass | apipasswd)
+      OPERATION=PRINT-PASSWORD
+      shift # past argument with no value
+      ;;
+
+    --no-ui)
+      START_UI=NO
+      shift # past argument with no value
+      ;;
+
+    *) # unknown option
+      echo "Unknown commnad line option: $i"
+      exit
+      ;;
+  esac
+done
+
+if [ ! -f /$BINDIR/kubectl ]; then
+    echo "kubectl not found. Please run kube.sh to install"
+    exit
 fi
 
+case $OPERATION in
+  PRINT-PASSWORD)
+    print_api_password
+    ;;
+
+  DOWN)
+    stop_all
+    ;;
+
+  UP)
+    start_all 15 $START_UI
+    ;;
+
+  *)
+    echo "Usage: ndslabs.sh up|down|print-passwd  [--no-ui]"
+    ;;
+esac
 exit 0

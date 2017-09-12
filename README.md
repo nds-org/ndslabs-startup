@@ -61,7 +61,8 @@ For futher customization, you can fork the entire [ndslabs
 repo](https://github.com/nds-org/ndslabs) and point these config options to your
 new fork, allowing you to override anything in the UI source code.
 ```
-# Drop-in a customized UI from git (custom CSS/HTML, new views, additional functionality, etc)
+# Drop-in a customized UI from git (custom CSS/HTML, new views, additional
+functionality, etc)
 git.dropin_repo: ""
 git.dropin_branch: ""
 ```
@@ -111,23 +112,25 @@ With no command passed, this will automatically start all necessary Kubernetes
 services running as separate Docker containers.
 
 ## Labs Workbench
-To evaluate the Labs Workbench platform, simply run `./ndslabs.sh`:
-```
-./ndslabs.sh
-```
+To evaluate the Labs Workbench platform, simply run `./ndslabs.sh up`
 
-With no command passed, this will automatically start Labs Workbench components.
+This will start all of the required Labs components in your local Kubernetes
+cluster.
 
 NOTE: assumes wildcard DNS is available, but you can add individual /etc/hosts
 entries if needed.
 
 ### Available Commands
-* `./ndslabs.sh`: Start workbench services
-* `./ndslabs.sh down`: Bring down all workbench services (but leaves Kubernetes
-  running)
-* `./ndslabs.sh apipass`: Print the Admin Password of the currently running
+* `./ndslabs.sh up`: Start workbench services
+* `./ndslabs.sh down`: Bring down all workbench services
+(but leaves Kubernetes running)
+* `./ndslabs.sh print-passwd`: Print the Admin Password of the currently running
 ndslabs-apiserver pod to the console
-* `./ndslabs.sh apipasswd`: Alias for `./ndslabs.sh apipass`
+
+
+### Command line options
+* `--no-ui`: Start up the API and supporting services, but don't launch the web
+service
 
 ## Development Environment (Optional)
 ```
@@ -148,4 +151,4 @@ with static image
 # Gotchas
 * Your node must have the label **ndslabs-role-compute=true** in order for the
 * Labs Workbench API server to successfully schedule services there. NOTE: the
-* `./ndslabs` script handles this for you, by default.
+* `./ndslabs.sh up` script handles this for you, by default.
