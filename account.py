@@ -22,7 +22,6 @@ def createUser(name, user_id, email, password):
 	print userImportCommand
 	runShellCmd(userFileCreateCommand)
 	runShellCmd(userImportCommand)
-	print pexpect.run('cat temp.json')
 	pexpect.run('rm temp.json')
 
 def deleteUser(userName):
