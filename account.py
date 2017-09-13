@@ -5,7 +5,7 @@ def runCommand(cmd):
 
 	if type(cmd) != type([]):
 		cmd = cmd.split(' ')
-	sp = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
+	sp = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=True)
 	out, err = sp.communicate()
 
 	return out
@@ -13,8 +13,13 @@ def runCommand(cmd):
 def login():
 	#get password
 	password = runCommand('kubectl exec -it ndslabs-apiserver-6rc4k cat password.txt')
-	print password
+	password = "".join(password.split())
+	sp = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=True)
+	sp.communicate(password)
 
 if __name__ == "__main__":
 	login()
+
+	print runCommand('ndslabsctl --server https://www.cmdev.ndslabs.org/api list accounts')
+
 
