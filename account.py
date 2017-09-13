@@ -5,7 +5,7 @@ def runCommand(cmd):
 
 	if type(cmd) != type([]):
 		cmd = cmd.split(' ')
-	sp = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=True)
+	sp = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
 	out, err = sp.communicate()
 
 	return out
@@ -16,7 +16,8 @@ def login():
 	password = "".join(password.split())
 	loginCommand = 'ndslabsctl --server https://www.cmdev.ndslabs.org/api login admin'
 	sp = Popen(loginCommand, stdout=PIPE, stderr=PIPE, shell=True)
-	sp.communicate(password)
+	print sp.communicate(password)
+	print 'done logging in'
 
 if __name__ == "__main__":
 	login()
