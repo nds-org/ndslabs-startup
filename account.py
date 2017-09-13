@@ -1,9 +1,11 @@
+from subprocess import Popen, PIPE, STDOUT
+
 
 def runCommand(cmd):
 
 	if type(cmd) != type([]):
 		cmd = cmd.split(' ')
-	sp = Popen(cmd, stdout=PIPE, stderr=PIPE, cwd='billing', shell=False, env=my_env)
+	sp = Popen(cmd, stdout=PIPE, stderr=PIPE, cwd='billing', shell=False)
 	out, err = sp.communicate()
 
 	return out
