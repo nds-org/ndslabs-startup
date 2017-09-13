@@ -14,11 +14,12 @@ def login():
 	#get password
 	password = runCommand('kubectl exec -it ndslabs-apiserver-6rc4k cat password.txt')
 	password = "".join(password.split())
-	sp = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=True)
+	loginCommand = 
+	sp = Popen(loginCommand, stdout=PIPE, stderr=PIPE, shell=True)
 	sp.communicate(password)
 
 if __name__ == "__main__":
-	login()
+	login('ndslabsctl --server https://www.cmdev.ndslabs.org/api login admin')
 
 	print runCommand('ndslabsctl --server https://www.cmdev.ndslabs.org/api list accounts')
 
