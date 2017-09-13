@@ -15,8 +15,8 @@ def login():
 	
 	pexpect.run('ndslabsctl --server https://www.cmdev.ndslabs.org/api list accounts')
 	
-def createUser(name, user_id, email):
-	userFileCreateCommand = 'cat etk.tmpl | sed "s/NAME/{0}/g" | sed "s/USER_ID/{1}/g" | sed "s/EMAIL/{2}/g" > temp.json'.format(name, user_id, email)
+def createUser(name, user_id, email, password):
+	userFileCreateCommand = 'cat etk.tmpl | sed "s/NAME/{0}/g" | sed "s/USER_ID/{1}/g" | sed "s/EMAIL/{2}/g" | sed "s/PASSWORD/{3}/g" > temp.json'.format(name, user_id, email, password)
 	print userFileCreateCommand
 	userImportCommand = 'ndslabsctl --server https://www.cmdev.ndslabs.org/api import -f temp.json'
 	print userImportCommand
@@ -29,14 +29,15 @@ def deleteUser(userName):
 	deleteCmd = 'ndslabsctl --server https://www.cmdev.ndslabs.org/api delete account {0}'.format(userName)
 	pexpect.run(deleteCmd)
 
-def generateUser(pattern):
+def generateUser(pattern, quantity):
+	for i in range(50):
+		name = pattern + str(i)
+		user_id = name
+		email = name + '@ndslabs.org'
+		createUser(pattern, quantity, email)
 
 
 if __name__ == "__main__":
 	login()
-
-	generateUser('user')
-
-	print pexpect.run('ndslabsctl --server https://www.cmdev.ndslabs.org/api list accounts')
 
 
