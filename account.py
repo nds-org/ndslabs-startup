@@ -5,7 +5,7 @@ def runCommand(cmd):
 
 	if type(cmd) != type([]):
 		cmd = cmd.split(' ')
-	sp = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=False)
+	sp = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=True)
 	out, err = sp.communicate()
 
 	return out
