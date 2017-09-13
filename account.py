@@ -11,6 +11,7 @@ def runCommand(cmd):
 def login():
 	#get password
 	password = runCommand('kubectl exec -it ndslabs-apiserver-6rc4k cat password.txt')
+	print password
 
 if __name__ == "__main__":
 	login()
