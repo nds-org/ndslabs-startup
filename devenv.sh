@@ -86,7 +86,7 @@ else
 
     $ECHO 'Labs Workbench Developer Environment successfully started!'
     $ECHO "\nYou should now be able to access Cloud9 via:"
-    $ECHO "https://$DOMAIN/ide.html"
+    $ECHO "https://cloud9.$DOMAIN"
     $ECHO "Any changes made here will be reflected on disk and mapped into the webui container"
     $ECHO "\nNOTE: Your basic-auth secret will be needed to authenticate you into this Cloud9 instance.\n"
 fi
