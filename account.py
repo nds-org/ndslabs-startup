@@ -14,8 +14,22 @@ def login():
 	child.sendline(password)
 	
 	pexpect.run('ndslabsctl --server https://www.cmdev.ndslabs.org/api list accounts')
-	
-def createUser(name, user_id, email, password):
+
+def saltPassword(password):
+	apriCmd = 'openssl passwd -apr1'
+	child = pexpect.spawn(apriCmd)
+	child.expect('Password:')
+	child.sendline(password)
+	child.sendline(password)
+	apriPassword = child.read()
+	apriPassword = apriPassword[apriPassword.index('$apr1$'):]
+	apriPassword = apriPassword.replace("\n", "")
+	apriPassword = apriPassword.replace("\r", "")
+	return apriPassword
+
+
+def createUser(name, user_id, email, unsalted_password):
+	password = saltPassword(unsalted_password)
 	userFileCreateCommand = 'cat etk.tmpl | sed "s/NAME/{0}/g" | sed "s/USER_ID/{1}/g" | sed "s/EMAIL/{2}/g" | sed "s/PASSWORD/{3}/g" > temp.json'.format(name, user_id, email, password)
 	print userFileCreateCommand
 	userImportCommand = 'ndslabsctl --server https://www.cmdev.ndslabs.org/api import -f temp.json'
