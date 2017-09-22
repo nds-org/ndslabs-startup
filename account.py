@@ -14,8 +14,8 @@ def login():
 	child = pexpect.spawn(loginCommand)
 	child.expect('Password:')
 	child.sendline(password)
-	
-	pexpect.run('ndslabsctl --server https://www.cmdev.ndslabs.org/api list accounts')
+
+	print child.read()
 
 def generatePassword(length):
 	password = ''
