@@ -29,9 +29,16 @@ def saltPassword(password):
 
 
 def createUser(name, user_id, email, unsalted_password):
-	password = saltPassword(unsalted_password)
-	userFileCreateCommand = 'cat etk.tmpl | sed "s/NAME/{0}/g" | sed "s/USER_ID/{1}/g" | sed "s/EMAIL/{2}/g" | sed "s/PASSWORD/{3}/g" > temp.json'.format(name, user_id, email, password)
-	print userFileCreateCommand
+	f = open('etk.tmpl')
+	template = f.read()
+	template = json.loads(template)
+	template['account']['name'] = name
+	template['account']['namespace'] = user_id
+	template['account']['email'] = email
+	template['account']['password'] = saltPassword(unsalted_password)
+	tempFile = open('temp.json', 'w')
+	tempFile.write(json.dumps(template))
+	tempFile.close()
 	userImportCommand = 'ndslabsctl --server https://www.cmdev.ndslabs.org/api import -f temp.json'
 	print userImportCommand
 	runShellCmd(userFileCreateCommand)
@@ -41,6 +48,9 @@ def createUser(name, user_id, email, unsalted_password):
 def deleteUser(userName):
 	deleteCmd = 'ndslabsctl --server https://www.cmdev.ndslabs.org/api delete account {0}'.format(userName)
 	pexpect.run(deleteCmd)
+
+def listUsers():
+	return pexpect.spawn('ndslabsctl --server https://www.cmdev.ndslabs.org/api list accounts').read()
 
 def generateUser(pattern, quantity):
 	for i in range(50):
