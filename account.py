@@ -1,4 +1,4 @@
-import pexpect, json
+import pexpect, json, argparse, sys
 
 def runShellCmd(shell_cmd):
 	child = pexpect.spawn('/bin/bash', ['-c', shell_cmd])
@@ -14,6 +14,15 @@ def login():
 	child.sendline(password)
 	
 	pexpect.run('ndslabsctl --server https://www.cmdev.ndslabs.org/api list accounts')
+
+def generatePassword(length):
+	password = ''
+	while len(password) < length:
+		gen = os.urandom(1)
+		intRep = ord(gen)
+		if intRep >= ord('!') and intRep <= ord('~'):
+			password += gen
+	return password
 
 def saltPassword(password):
 	apriCmd = 'openssl passwd -apr1'
@@ -41,7 +50,6 @@ def createUser(name, user_id, email, unsalted_password):
 	tempFile.close()
 	userImportCommand = 'ndslabsctl --server https://www.cmdev.ndslabs.org/api import -f temp.json'
 	print userImportCommand
-	runShellCmd(userFileCreateCommand)
 	runShellCmd(userImportCommand)
 	#pexpect.run('rm temp.json')
 
@@ -53,14 +61,28 @@ def listUsers():
 	return pexpect.spawn('ndslabsctl --server https://www.cmdev.ndslabs.org/api list accounts').read()
 
 def generateUser(pattern, quantity):
-	for i in range(50):
+	for i in range(quantity):
 		name = pattern + str(i)
 		user_id = name
 		email = name + '@ndslabs.org'
-		createUser(pattern, quantity, email)
+		createUser(name, user_id, email, generatePassword(16))
 
 
 if __name__ == "__main__":
-	login()
+	#login()
+
+	parser = argparse.ArgumentParser()
+	group = parser.add_mutually_exclusive_group()
+	group.add_argument("--prefix", help="set new user with given prefix", action='store')
+	group.add_argument("--csv", help="import users from csv file", action='store', metavar='FILENAME')
+
+	parser.add_argument("--count", nargs='?', type=int)
+
+	args = parser.parse_args()
+	if args.count is None:
+		args.count = 1
+
+	if args.prefix:
+		generateUser(args.prefix, args.count)
 
 
