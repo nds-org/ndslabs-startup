@@ -11,6 +11,7 @@ def login():
 	#password = pexpect.run('kubectl exec -it ndslabs-apiserver-6rc4k cat password.txt')
 	#password = "".join(password.split())
 	#print password
+	print server
 	loginCommand ='ndslabsctl --server {} login admin'.format(server)
 	child = pexpect.spawn(loginCommand)
 	child.expect('Password:')
@@ -85,8 +86,6 @@ def readFile(fileName, randomPassword):
 
 
 def main():
-	if not login():
-		return
 	#login()
 
 	parser = argparse.ArgumentParser()
@@ -101,9 +100,13 @@ def main():
 	parser.add_argument("--count", nargs='?', type=int)
 	parser.add_argument("--server")
 
+	args = parser.parse_args()
+	
 	server = parser.server
 
-	args = parser.parse_args()
+	if not login():
+		return
+
 	if args.count is None:
 		args.count = 1
 
