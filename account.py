@@ -90,7 +90,7 @@ if __name__ == "__main__":
 	group.add_argument("--csv", help="import users from csv file", action='store', metavar='FILENAME')
 
 	group2 = parser.add_mutually_exclusive_group()
-	group2.add_argument("--randomPassword", action='store_true')
+	group2.add_argument("--randomPassword", action='store_true', help='generate a random password')
 	group2.add_argument("--passwordPrefix", action='store', help="if used for a csv file, the passwords will be the same. Otherwise, it'll increment: password1, password2, etc.")
 
 	parser.add_argument("--count", nargs='?', type=int)
