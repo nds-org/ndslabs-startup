@@ -1,4 +1,6 @@
-import pexpect, json, argparse, sys, os
+import pexpect, json, argparse, sys, os, csv
+
+DEFAULT_PASSWORD_LENGTH = 16
 
 def runShellCmd(shell_cmd):
 	child = pexpect.spawn('/bin/bash', ['-c', shell_cmd])
@@ -37,7 +39,7 @@ def saltPassword(password):
 	return apriPassword
 
 
-def createUser(name, user_id, email, unsalted_password):
+def createUser(name, user_id, email, unsalted_password, description=''):
 	f = open('etk.tmpl')
 	template = f.read()
 	template = json.loads(template)
@@ -45,6 +47,7 @@ def createUser(name, user_id, email, unsalted_password):
 	template['account']['namespace'] = user_id
 	template['account']['email'] = email
 	template['account']['password'] = saltPassword(unsalted_password)
+	template['account']['description'] = description
 	tempFile = open('temp.json', 'w')
 	tempFile.write(json.dumps(template))
 	tempFile.close()
@@ -60,21 +63,35 @@ def deleteUser(userName):
 def listUsers():
 	return pexpect.spawn('ndslabsctl --server https://www.cmdev.ndslabs.org/api list accounts').read()
 
-def generateUser(pattern, quantity):
-	for i in range(quantity):
-		name = pattern + str(i)
-		user_id = name
-		email = name + '@ndslabs.org'
-		createUser(name, user_id, email, generatePassword(16))
+def readFile(fileName, randomPassword):
+	with open(fileName, 'rb') as csvfile:
+		csvReader = csv.reader(csvfile, delimiter=',')
+		for row in csvReader:
+			desc = row[0]
+			name = row[1] + ' ' + row[2]
+			email = row[3]
+			user_id = email[:email.index('@')]
+			if randomPassword == True:
+				password = generatePassword(DEFAULT_PASSWORD_LENGTH)
+			else:
+				password = randomPassword
+			createUser(name, user_id, email, password, description = desc)
+
+
+
 
 
 if __name__ == "__main__":
-	login()
+	#login()
 
 	parser = argparse.ArgumentParser()
 	group = parser.add_mutually_exclusive_group()
 	group.add_argument("--prefix", help="set new user with given prefix", action='store')
 	group.add_argument("--csv", help="import users from csv file", action='store', metavar='FILENAME')
+
+	group2 = parser.add_mutually_exclusive_group()
+	group2.add_argument("--randomPassword", action='store_true')
+	group2.add_argument("--passwordPrefix", action='store', help="if used for a csv file, the passwords will be the same. Otherwise, it'll increment: password1, password2, etc.")
 
 	parser.add_argument("--count", nargs='?', type=int)
 
@@ -83,6 +100,16 @@ if __name__ == "__main__":
 		args.count = 1
 
 	if args.prefix:
-		generateUser(args.prefix, args.count)
+		for i in range(args.count):
+			name = pattern + str(i + 1)
+			user_id = name
+			email = name + '@ndslabs.org'
+			if args.randomPassword:
+				password = generatePassword(DEFAULT_PASSWORD_LENGTH)
+			else:
+				password = args.passwordPrefix + str(i + 1)
+			createUser(name, user_id, email, password)
+	else:
+		readFile(args.csv, args.randomPassword or args.passwordPrefix)
 
 
