@@ -1,4 +1,4 @@
-import pexpect, json, argparse, sys
+import pexpect, json, argparse, sys, os
 
 def runShellCmd(shell_cmd):
 	child = pexpect.spawn('/bin/bash', ['-c', shell_cmd])
@@ -69,7 +69,7 @@ def generateUser(pattern, quantity):
 
 
 if __name__ == "__main__":
-	#login()
+	login()
 
 	parser = argparse.ArgumentParser()
 	group = parser.add_mutually_exclusive_group()
