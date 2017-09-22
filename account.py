@@ -1,4 +1,4 @@
-import pexpect
+import pexpect, json
 
 def runShellCmd(shell_cmd):
 	child = pexpect.spawn('/bin/bash', ['-c', shell_cmd])
