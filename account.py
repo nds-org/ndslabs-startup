@@ -36,7 +36,7 @@ def createUser(name, user_id, email, unsalted_password):
 	print userImportCommand
 	runShellCmd(userFileCreateCommand)
 	runShellCmd(userImportCommand)
-	pexpect.run('rm temp.json')
+	#pexpect.run('rm temp.json')
 
 def deleteUser(userName):
 	deleteCmd = 'ndslabsctl --server https://www.cmdev.ndslabs.org/api delete account {0}'.format(userName)
