@@ -1,21 +1,25 @@
 import pexpect, json, argparse, sys, os, csv
 
 DEFAULT_PASSWORD_LENGTH = 16
+server = ''
 
 def runShellCmd(shell_cmd):
 	child = pexpect.spawn('/bin/bash', ['-c', shell_cmd])
 	child.expect(pexpect.EOF)
 
 def login():
-	password = pexpect.run('kubectl exec -it ndslabs-apiserver-6rc4k cat password.txt')
-	password = "".join(password.split())
-
-	loginCommand ='ndslabsctl --server https://www.cmdev.ndslabs.org/api login admin'
+	#password = pexpect.run('kubectl exec -it ndslabs-apiserver-6rc4k cat password.txt')
+	#password = "".join(password.split())
+	#print password
+	loginCommand ='ndslabsctl --server {} login admin'.format(server)
 	child = pexpect.spawn(loginCommand)
 	child.expect('Password:')
-	child.sendline(password)
-
-	print child.read()
+	print 'Enter admin password for ' + server
+	child.sendline(raw_input())
+	if 'Login succeeded' not in child.read():
+		print "Invalid password"
+		return False
+	return True
 
 def generatePassword(length):
 	password = ''
@@ -51,17 +55,17 @@ def createUser(name, user_id, email, unsalted_password, description=''):
 	tempFile = open('temp.json', 'w')
 	tempFile.write(json.dumps(template))
 	tempFile.close()
-	userImportCommand = 'ndslabsctl --server https://www.cmdev.ndslabs.org/api import -f temp.json'
+	userImportCommand = 'ndslabsctl --server {} import -f temp.json'.format(server)
 	print userImportCommand
 	runShellCmd(userImportCommand)
 	#pexpect.run('rm temp.json')
 
 def deleteUser(userName):
-	deleteCmd = 'ndslabsctl --server https://www.cmdev.ndslabs.org/api delete account {0}'.format(userName)
+	deleteCmd = 'ndslabsctl --server {} delete account {}'.format(server, userName)
 	pexpect.run(deleteCmd)
 
 def listUsers():
-	return pexpect.spawn('ndslabsctl --server https://www.cmdev.ndslabs.org/api list accounts').read()
+	return pexpect.spawn('ndslabsctl --server {} list accounts'.format(server)).read()
 
 def readFile(fileName, randomPassword):
 	with open(fileName, 'rb') as csvfile:
@@ -80,8 +84,9 @@ def readFile(fileName, randomPassword):
 
 
 
-
-if __name__ == "__main__":
+def main():
+	if not login():
+		return
 	#login()
 
 	parser = argparse.ArgumentParser()
@@ -94,6 +99,9 @@ if __name__ == "__main__":
 	group2.add_argument("--passwordPrefix", action='store', help="if used for a csv file, the passwords will be the same. Otherwise, it'll increment: password1, password2, etc.")
 
 	parser.add_argument("--count", nargs='?', type=int)
+	parser.add_argument("--server")
+
+	server = parser.server
 
 	args = parser.parse_args()
 	if args.count is None:
@@ -113,3 +121,5 @@ if __name__ == "__main__":
 		readFile(args.csv, args.randomPassword or args.passwordPrefix)
 
 
+if __name__ == "__main__":
+	main()
