@@ -58,9 +58,8 @@ def createUser(name, user_id, email, unsalted_password, description=''):
 	tempFile.write(json.dumps(template))
 	tempFile.close()
 	userImportCommand = 'ndslabsctl --server {} import -f temp.json'.format(server)
-	print userImportCommand
 	runShellCmd(userImportCommand)
-	#pexpect.run('rm temp.json')
+	pexpect.run('rm temp.json')
 
 def deleteUser(userName):
 	global server
