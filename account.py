@@ -122,7 +122,7 @@ def main():
 
 	if args.prefix:
 		for i in range(args.count):
-			name = pattern + str(i + 1)
+			name = args.prefix + str(i + 1)
 			user_id = name
 			email = name + '@ndslabs.org'
 			if args.passwordPrefix:
