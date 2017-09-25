@@ -14,6 +14,7 @@ def login():
 	print server
 	loginCommand ='ndslabsctl --server {} login admin'.format(server)
 	child = pexpect.spawn(loginCommand)
+	print loginCommand
 	child.expect('Password:')
 	print 'Enter admin password for ' + server
 	child.sendline(raw_input())
