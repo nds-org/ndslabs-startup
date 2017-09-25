@@ -93,8 +93,8 @@ def main():
 
 	parser = argparse.ArgumentParser()
 	group = parser.add_mutually_exclusive_group()
-	group.add_argument("--prefix", help="set new user with given prefix", action='store')
-	group.add_argument("--csv", help="import users from csv file", action='store', metavar='FILENAME')
+	group.add_argument("--prefix", help="set new user with given prefix. Must specify prefix or csv", action='store')
+	group.add_argument("--csv", help="import users from csv file. Must specify prefix or csv", action='store', metavar='FILENAME')
 
 	group2 = parser.add_mutually_exclusive_group()
 	group2.add_argument("--randomPassword", action='store_true', help='generate a random password')
@@ -108,6 +108,12 @@ def main():
 	global server
 	server = args.server
 
+	
+	if not args.prefix and not args.csv:
+		print parser.parse_args(['-h'])
+		return
+
+
 	if not login():
 		return
 
@@ -119,10 +125,10 @@ def main():
 			name = pattern + str(i + 1)
 			user_id = name
 			email = name + '@ndslabs.org'
-			if args.randomPassword:
-				password = generatePassword(DEFAULT_PASSWORD_LENGTH)
-			else:
+			if args.passwordPrefix:
 				password = args.passwordPrefix + str(i + 1)
+			else:
+				password = generatePassword(DEFAULT_PASSWORD_LENGTH)
 			createUser(name, user_id, email, password)
 	else:
 		readFile(args.csv, args.randomPassword or args.passwordPrefix)
