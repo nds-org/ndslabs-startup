@@ -11,10 +11,9 @@ def login():
 	#password = pexpect.run('kubectl exec -it ndslabs-apiserver-6rc4k cat password.txt')
 	#password = "".join(password.split())
 	#print password
-	print server
+	global server
 	loginCommand ='ndslabsctl --server {} login admin'.format(server)
 	child = pexpect.spawn(loginCommand)
-	print loginCommand
 	child.expect('Password:')
 	print 'Enter admin password for ' + server
 	child.sendline(raw_input())
@@ -46,6 +45,7 @@ def saltPassword(password):
 
 
 def createUser(name, user_id, email, unsalted_password, description=''):
+	global server
 	f = open('etk.tmpl')
 	template = f.read()
 	template = json.loads(template)
@@ -63,10 +63,12 @@ def createUser(name, user_id, email, unsalted_password, description=''):
 	#pexpect.run('rm temp.json')
 
 def deleteUser(userName):
+	global server
 	deleteCmd = 'ndslabsctl --server {} delete account {}'.format(server, userName)
 	pexpect.run(deleteCmd)
 
 def listUsers():
+	global server
 	return pexpect.spawn('ndslabsctl --server {} list accounts'.format(server)).read()
 
 def readFile(fileName, randomPassword):
@@ -103,6 +105,7 @@ def main():
 
 	args = parser.parse_args()
 
+	global server
 	server = args.server
 
 	if not login():
