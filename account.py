@@ -98,11 +98,11 @@ def main():
 	group2.add_argument("--passwordPrefix", action='store', help="if used for a csv file, the passwords will be the same. Otherwise, it'll increment: password1, password2, etc.")
 
 	parser.add_argument("--count", nargs='?', type=int)
-	parser.add_argument("--server", help="specifies server to connect to")
+	parser.add_argument("server", help="specifies server to connect to")
 
 	args = parser.parse_args()
 
-	server = parser.server
+	server = args.server
 
 	if not login():
 		return
