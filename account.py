@@ -8,17 +8,14 @@ def runShellCmd(shell_cmd):
 	child.expect(pexpect.EOF)
 
 def login():
-	#password = pexpect.run('kubectl exec -it ndslabs-apiserver-6rc4k cat password.txt')
-	#password = "".join(password.split())
-	#print password
 	global server
 	loginCommand ='ndslabsctl --server {} login admin'.format(server)
 	child = pexpect.spawn(loginCommand)
 	child.expect('Password:')
-	print 'Enter admin password for ' + server
+	print('Enter admin password for ' + server)
 	child.sendline(raw_input())
 	if 'Login succeeded' not in child.read():
-		print "Invalid password"
+		print("Invalid password")
 		return False
 	return True
 
@@ -109,7 +106,7 @@ def main():
 
 	
 	if not args.prefix and not args.csv:
-		print parser.parse_args(['-h'])
+		print(parser.parse_args(['-h']))
 		return
 
 
