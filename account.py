@@ -14,7 +14,7 @@ def login():
 	child.expect('Password:')
 	password = getpass.getpass(prompt='Enter admin password for ' + server)
 	child.sendline(password)
-	if 'Login succeeded' not in child.read():
+	if 'Login succeeded' not in str(child.read()):
 		print("Invalid password")
 		return False
 	return True
