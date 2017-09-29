@@ -103,7 +103,15 @@ def main():
 
 	global server
 	server = args.server
+	if server is None:
+		server = ''
 
+	if '/api' not in server:
+		if server['-1'] != '/':
+			server = server + '/'
+		server = server + 'api'
+
+	print server
 	
 	if not args.prefix and not args.csv:
 		print(parser.parse_args(['-h']))
