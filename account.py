@@ -71,20 +71,27 @@ def listUsers():
 	global server
 	return pexpect.spawn('ndslabsctl --server {} list accounts'.format(server)).read()
 
-def readFile(fileName, randomPassword):
+def readFileP2(fileName, randomPassword):
+	with open(fileName, 'rb') as csvfile:
+		readFile(fileName, randomPassword, csvfile)
+
+def readFileP3(fileName, randomPassword):
 	with open(fileName, 'rb', encoding='utf8') as csvfile:
-		csvReader = csv.reader(csvfile, delimiter=',')
-		for row in csvReader:
-			desc = row[0]
-			name = row[1] + ' ' + row[2]
-			email = row[3]
-			user_id = email[:email.index('@')]
-			if randomPassword == True:
-				password = generatePassword(DEFAULT_PASSWORD_LENGTH)
-				print(user_id + '\t' + password)
-			else:
-				password = randomPassword
-			createUser(name, user_id, email, password, description = desc)
+		readFile(fileName, randomPassword, csvfile)
+
+def readFile(fileName, randomPassword, csvfile):
+	csvReader = csv.reader(csvfile, delimiter=',')
+	for row in csvReader:
+		desc = row[0]
+		name = row[1] + ' ' + row[2]
+		email = row[3]
+		user_id = email[:email.index('@')]
+		if randomPassword == True:
+			password = generatePassword(DEFAULT_PASSWORD_LENGTH)
+			print(user_id + '\t' + password)
+		else:
+			password = randomPassword
+		createUser(name, user_id, email, password, description = desc)
 
 
 
@@ -136,8 +143,10 @@ def main():
 				password = generatePassword(DEFAULT_PASSWORD_LENGTH)
 				print(user_id + '\t' + password)
 			createUser(name, user_id, email, password)
+	else if sys.version_info.major == 3:
+		readFileP3(args.csv, args.randomPassword or args.passwordPrefix)
 	else:
-		readFile(args.csv, args.randomPassword or args.passwordPrefix)
+		readFileP2(args.csv, args.randomPassword or args.passwordPrefix)
 
 
 if __name__ == "__main__":
