@@ -77,7 +77,7 @@ def readFile(fileName, randomPassword):
 			user_id = email[:email.index('@')]
 			if randomPassword == True:
 				password = generatePassword(DEFAULT_PASSWORD_LENGTH)
-				print user_id + '\t' + password
+				print(user_id + '\t' + password)
 			else:
 				password = randomPassword
 			createUser(name, user_id, email, password, description = desc)
@@ -130,7 +130,7 @@ def main():
 				password = args.passwordPrefix + str(i + 1)
 			else:
 				password = generatePassword(DEFAULT_PASSWORD_LENGTH)
-				print user_id + '\t' + password
+				print(user_id + '\t' + password)
 			createUser(name, user_id, email, password)
 	else:
 		readFile(args.csv, args.randomPassword or args.passwordPrefix)
