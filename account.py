@@ -1,4 +1,4 @@
-import pexpect, json, argparse, sys, os, csv, getPAss
+import pexpect, json, argparse, sys, os, csv, getPass
 
 DEFAULT_PASSWORD_LENGTH = 16
 server = ''
