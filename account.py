@@ -143,7 +143,7 @@ def main():
 				password = generatePassword(DEFAULT_PASSWORD_LENGTH)
 				print(user_id + '\t' + password)
 			createUser(name, user_id, email, password)
-	else if sys.version_info.major == 3:
+	elif sys.version_info.major == 3:
 		readFileP3(args.csv, args.randomPassword or args.passwordPrefix)
 	else:
 		readFileP2(args.csv, args.randomPassword or args.passwordPrefix)
