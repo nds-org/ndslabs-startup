@@ -13,8 +13,11 @@ def login():
 	child = pexpect.spawn(loginCommand)
 	child.expect('Password:')
 	password = getpass.getpass(prompt='Enter admin password for ' + server)
+	print(password)
 	child.sendline(password)
-	if 'Login succeeded' not in str(child.read().decode("utf-8")):
+	output = str(child.read().decode("utf-8"))
+	print output
+	if 'Login succeeded' not in output:
 		print("Invalid password")
 		return False
 	return True
