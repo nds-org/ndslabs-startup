@@ -34,7 +34,7 @@ def saltPassword(password):
 	child.expect('Password:')
 	child.sendline(password)
 	child.sendline(password)
-	apriPassword = child.read()
+	apriPassword = str(child.read())
 	apriPassword = apriPassword[apriPassword.index('$apr1$'):]
 	apriPassword = apriPassword.replace("\n", "")
 	apriPassword = apriPassword.replace("\r", "")
