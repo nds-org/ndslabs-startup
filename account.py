@@ -43,7 +43,7 @@ def saltPassword(password):
 
 def createUser(name, user_id, email, unsalted_password, description=''):
 	global server
-	f = open('etk.tmpl')
+	f = open('account.tmpl')
 	template = f.read()
 	template = json.loads(template)
 	template['account']['name'] = name
