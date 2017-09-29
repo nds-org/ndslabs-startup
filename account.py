@@ -16,7 +16,7 @@ def login():
 	print(password)
 	child.sendline(password)
 	output = str(child.read().decode("utf-8"))
-	print output
+	print(output)
 	if 'Login succeeded' not in output:
 		print("Invalid password")
 		return False
