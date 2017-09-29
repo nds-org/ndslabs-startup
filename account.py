@@ -109,8 +109,6 @@ def main():
 		if server[-1] != '/':
 			server = server + '/'
 		server = server + 'api'
-
-	print server
 	
 	if not args.prefix and not args.csv:
 		print(parser.parse_args(['-h']))
