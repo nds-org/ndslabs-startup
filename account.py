@@ -72,7 +72,7 @@ def listUsers():
 	return pexpect.spawn('ndslabsctl --server {} list accounts'.format(server)).read()
 
 def readFile(fileName, randomPassword):
-	with open(fileName, 'rb') as csvfile:
+	with open(fileName, 'rb', encoding='utf8') as csvfile:
 		csvReader = csv.reader(csvfile, delimiter=',')
 		for row in csvReader:
 			desc = row[0]
