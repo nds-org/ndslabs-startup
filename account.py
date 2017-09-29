@@ -76,7 +76,7 @@ def readFileP2(fileName, randomPassword):
 		readFile(fileName, randomPassword, csvfile)
 
 def readFileP3(fileName, randomPassword):
-	with open(fileName, 'rb', encoding='utf8') as csvfile:
+	with open(fileName, 'rt', encoding='utf8') as csvfile:
 		readFile(fileName, randomPassword, csvfile)
 
 def readFile(fileName, randomPassword, csvfile):
