@@ -25,7 +25,7 @@ def generatePassword(length):
 		gen = os.urandom(1)
 		intRep = ord(gen)
 		if intRep >= ord('!') and intRep <= ord('~'):
-			password += str(gen)
+			password += str(gen.decode("utf-8"))
 	return password
 
 def saltPassword(password):
