@@ -12,7 +12,7 @@ def login():
 	loginCommand ='ndslabsctl --server {} login admin'.format(server)
 	child = pexpect.spawn(loginCommand)
 	child.expect('Password:')
-	password = getpass.getpass(prompt='Enter admin password for ' + server)
+	password = getpass.getpass(prompt='Enter admin password for ' + server + " :")
 	child.sendline(password)
 	output = str(child.read().decode("utf-8"))
 	if 'Login succeeded' not in output:
