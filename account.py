@@ -77,6 +77,7 @@ def readFile(fileName, randomPassword):
 			user_id = email[:email.index('@')]
 			if randomPassword == True:
 				password = generatePassword(DEFAULT_PASSWORD_LENGTH)
+				print user_id + '\t' + password
 			else:
 				password = randomPassword
 			createUser(name, user_id, email, password, description = desc)
@@ -85,8 +86,6 @@ def readFile(fileName, randomPassword):
 
 
 def main():
-	#login()
-
 	parser = argparse.ArgumentParser()
 	group = parser.add_mutually_exclusive_group()
 	group.add_argument("--prefix", help="set new user with given prefix. Must specify prefix or csv", action='store')
@@ -133,6 +132,7 @@ def main():
 				password = args.passwordPrefix + str(i + 1)
 			else:
 				password = generatePassword(DEFAULT_PASSWORD_LENGTH)
+				print user_id + '\t' + password
 			createUser(name, user_id, email, password)
 	else:
 		readFile(args.csv, args.randomPassword or args.passwordPrefix)
