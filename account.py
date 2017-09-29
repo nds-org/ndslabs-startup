@@ -14,6 +14,7 @@ def login():
 	child.expect('Password:')
 	password = getpass.getpass(prompt='Enter admin password for ' + server)
 	print(password)
+	print(len(password))
 	child.sendline(password)
 	output = str(child.read().decode("utf-8"))
 	print(output)
