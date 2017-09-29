@@ -107,7 +107,7 @@ def main():
 		server = ''
 
 	if '/api' not in server:
-		if server['-1'] != '/':
+		if server[-1] != '/':
 			server = server + '/'
 		server = server + 'api'
 
