@@ -1,4 +1,4 @@
-import pexpect, json, argparse, sys, os, csv
+import pexpect, json, argparse, sys, os, csv, getPAss
 
 DEFAULT_PASSWORD_LENGTH = 16
 server = ''
@@ -12,8 +12,8 @@ def login():
 	loginCommand ='ndslabsctl --server {} login admin'.format(server)
 	child = pexpect.spawn(loginCommand)
 	child.expect('Password:')
-	print('Enter admin password for ' + server)
-	child.sendline(raw_input())
+	password = getpass.getpass(prompt='Enter admin password for ' + server)
+	child.sendline(raw_input(password))
 	if 'Login succeeded' not in child.read():
 		print("Invalid password")
 		return False
