@@ -19,11 +19,11 @@ spec:
         stdin: true
         tty: true
         env:
-          - name: CLUSTER_ID
-            valueFrom:
-              configMapKeyRef:
-                name: ndslabs-config
-                key: workbench.domain
+         - name: CLUSTER_ID
+           valueFrom:
+             configMapKeyRef:
+               name: ndslabs-config
+               key: workbench.domain
          - name: ETCD_HOST
            value: $(NDSLABS_ETCD_SERVICE_HOST)
          - name: ETCD_PORT
