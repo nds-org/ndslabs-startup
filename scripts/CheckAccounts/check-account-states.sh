@@ -3,33 +3,50 @@
 # Usage: ./check-account-states.sh
 #
 
-ECHO="echo -e"
-KUBECTL="/opt/bin/kubectl"
-ETCDCTL="etcdctl"
+ECHO="echo -e "
 
-DEFAULT_VALUE=480
-FIELD_NAME="inactiveTimeout"
+# Assume Multi-node
+# TODO: fall back to single-node?
+KUBECTL="$(which kubectl)"
+ETCDCTL="$(which etcdctl)"
+
+DEFAULT_TIMEOUT=480
+DEFAULT_LASTLOGIN=0
 
 # Loop over all accounts in etcdand verify the state of each one
-USERS=$($ETCDCTL ls /ndslabs/accounts)
+#USERS=$($ETCDCTL ls /ndslabs/accounts)
+USERS=/ndslabs/accounts/lambert8
 for namespace in $USERS; do
 	# Print progress (in case of error)
 	$ECHO "Checking $namespace/account..."
 
 	# Fix any unescaped control characters in account object
-        output=$($ETCDCTL get $namespace/account  | sed -e 's#\\n# #g')
+	original_json=$($ETCDCTL get $namespace/account  | sed -e 's#\\n# #g')
+	fixed_json="$original_json"
 
 	# Verify correct settings for inactive service timeout
-	timeout=$($ECHO $output | jq ".$FIELD_NAME")
+	timeout=$($ECHO $fixed_json | jq ".inactiveTimeout")
 	if [ "$timeout" == "null" -o "$timeout" == "0" ]; then
-		$ECHO "Found missing timeout: $namespace => $timeout. Adjusting to $DEFAULT_VALUE"
-		fixed_json=$($ECHO $output | jq --compact-output ".$FIELD_NAME = $DEFAULT_VALUE" | sed -e '#\"#\\"#g' | sed -e '#\#\\#g')
-		$ECHO "New JSON: ${fixed_json}"
+		$ECHO "Found missing timeout: $namespace => $timeout. Adjusting to $DEFAULT_TIMEOUT"
+		fixed_json=$($ECHO $fixed_json | jq --compact-output ".inactiveTimeout = $DEFAULT_TIMEOUT" | sed -e '#\"#\\"#g' | sed -e '#\#\\#g')
+	fi
+
+	# Verify that user has a lastLogin field
+	last_login=$($ECHO $fixed_json | jq ".lastLogin")
+	if [ "$last_login" == "null" ]; then
+		$ECHO "Found missing lastLogin: $namespace => $last_login. Adjusting to $DEFAULT_LASTLOGIN"
+		fixed_json=$($ECHO $fixed_json | jq --compact-output ".lastLogin = $DEFAULT_LASTLOGIN" | sed -e '#\"#\\"#g' | sed -e '#\#\\#g')
+	fi
+
+	# If our JSON value changed, prompt to update it in etcd
+	if [ "$fixed_json" != "$original_json" ]; then
+		$ECHO "Currently: ${original_json}"
+		$ECHO "New Value: ${fixed_json}"
 		read -p 'Replace existing JSON with the above value? [y/N] ' replace
-        	if [ "${replace:0:1}" == "y" -o "${replace:0:1}" == "Y" ]; then
+		if [ "${replace:0:1}" == "y" -o "${replace:0:1}" == "Y" ]; then
 			results=$($ETCDCTL set $namespace/account "$fixed_json")
-        	fi
-        fi
+		fi
+	fi
 done
 
 # TODO: Loop over the rest of all namespaces and verify the state of each one
