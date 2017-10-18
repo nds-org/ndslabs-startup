@@ -14,8 +14,7 @@ DEFAULT_TIMEOUT=480
 DEFAULT_LASTLOGIN=0
 
 # Loop over all accounts in etcdand verify the state of each one
-#USERS=$($ETCDCTL ls /ndslabs/accounts)
-USERS=/ndslabs/accounts/lambert8
+USERS=$($ETCDCTL ls /ndslabs/accounts)
 for namespace in $USERS; do
 	# Print progress (in case of error)
 	$ECHO "Checking $namespace/account..."
