@@ -59,12 +59,11 @@ function start_all() {
   $ECHO '\nStarting Labs Workbench core services...'
 
   # Pre-process jinja-style variables by piping through sed
-  cat templates/core/loadbalancer.yaml | sed -e "s#{{[ ]*DOMAIN[ ]*}}#$DOMAIN#g" | $KUBECTL_BIN create -f -
+  cat templates/core/loadbalancer.yaml | sed -e "s#{{[ \s]*DOMAIN[ \s]*}}#$DOMAIN#g" | $KUBECTL_BIN create -f -
   $KUBECTL_BIN create -f templates/smtp/ -f templates/core/svc.yaml -f templates/core/etcd.yaml -f templates/core/apiserver.yaml
 
   # Only start bind if requested
   if [ "$3" == YES ]; then
-    cat templates/core/loadbalancer.yaml | sed -e "s#{{[ ]*DOMAIN[ ]*}}#$DOMAIN#g" | $KUBECTL_BIN create -f -
     $KUBECTL_BIN create -f templates/core/bind.yaml
   fi
 
