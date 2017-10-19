@@ -6,7 +6,7 @@ ECHO='echo -e'
 command="$(echo $1 | tr '[A-Z]' '[a-z]')"
 
 # Ensure that Kubernetes / Labs Workbench are running
-./ndslabs.sh --api-only 
+./ndslabs.sh up --no-ui
 
 if [ "$command" == "down" ]; then
     # Stop Dev version of webui and a cloud9 container
@@ -19,7 +19,7 @@ if [ "$command" == "down" ]; then
     $BINDIR/kubectl create -f templates/core/webui.yaml
 
 
-# If "basic-auth" is passed as a command, offer to regenerate the user's basic-auth secret 
+# If "basic-auth" is passed as a command, offer to regenerate the user's basic-auth secret
 elif [ "$command" == "basic-auth" ]; then
     kube_output="$($BINDIR/kubectl get secret -o name basic-auth 2>&1)"
     if [ "$kube_output" == "secret/basic-auth" ]; then
@@ -53,12 +53,12 @@ elif [ "$command" == "basic-auth" ]; then
     $ECHO ""
 
     # Duplicate stdout
-    auth="$(docker run -it --rm bodom0015/htpasswd -b -c /dev/stdout $username $password | tail -1)" 
-    $BINDIR/kubectl create secret generic basic-auth --from-literal=auth="$auth" 
-    
- 
+    auth="$(docker run -it --rm bodom0015/htpasswd -b -c /dev/stdout $username $password | tail -1)"
+    $BINDIR/kubectl create secret generic basic-auth --from-literal=auth="$auth"
+
+
     exit 0
-else
+  elif [ "$command" == "up" ]; then
     # Ensure that user has created a basic-auth secret
     $BINDIR/kubectl get secret basic-auth >/dev/null 2>&1 || $ECHO 'You will now be prompted for your desired credentials for basic-auth into Cloud9.' && ./devenv.sh basic-auth
 
@@ -86,9 +86,12 @@ else
 
     $ECHO 'Labs Workbench Developer Environment successfully started!'
     $ECHO "\nYou should now be able to access Cloud9 via:"
-    $ECHO "https://$DOMAIN/ide.html"
+    $ECHO "https://cloud9.$DOMAIN"
     $ECHO "Any changes made here will be reflected on disk and mapped into the webui container"
     $ECHO "\nNOTE: Your basic-auth secret will be needed to authenticate you into this Cloud9 instance.\n"
+  else
+    $ECHO 'Labs Workbench Developer Environment usage: devenv.sh [up|down|basic-auth]'
+    exit 0
 fi
 
 # Wait for the UI server to start
