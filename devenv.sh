@@ -66,17 +66,14 @@ elif [ "$command" == "basic-auth" ]; then
     $ECHO "\nThe developer environment assumes that you have the ndslabs source code checked out at /home/core/ndslabs"
     $ECHO "If your path differs, you can manually alter the YAML templates for cloud9 and the webui located in ./templates/dev/"
 
-    # Stop production version of webui, start dev one with cloud9
-    $ECHO '\nReplacing Labs Workbench UI with developer instance...'
-    $BINDIR/kubectl delete rc ndslabs-webui
-
     # Grab our DOMAIN from the configmap
     DOMAIN="$(cat templates/config.yaml | grep domain | awk '{print $2}' | sed s/\"//g)"
     $ECHO "    DOMAIN=$DOMAIN"
 
-    $ECHO '\nStarting developer environment and UI...'
-    $BINDIR/kubectl create -f templates/dev/webui.yaml
-    cat templates/dev/cloud9.yaml | sed -e "s#{{[ ]*DOMAIN[ ]*}}#${DOMAIN}#g" | kubectl create -f -
+    $ECHO '\nStarting developer environment and restarting UI...'
+    $BINDIR/kubectl replace -f templates/dev/webui.yaml
+    $BINDIR/kubectl delete pod $(kubectl get pods | grep ndslabs-webui | awk '{print $1}')
+    cat templates/dev/cloud9.yaml | sed -e "s#{{[ ]*DOMAIN[ ]*}}#${DOMAIN}#g" | kubectl replace -f -
 
     $ECHO '\nWaiting for Cloud9 developer environment to start...'
     until $(curl --output /dev/null --silent --fail --header "Host: cloud9.$DOMAIN" localhost/); do

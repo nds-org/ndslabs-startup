@@ -1,7 +1,32 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: ndslabs-ingress
+  name: ndslabs-auth
+  annotations:
+    "nginx.ingress.kubernetes.io/auth-url": "https://www.{{ DOMAIN }}/cauth/auth"
+    "nginx.ingress.kubernetes.io/auth-signin": "https://www.{{ DOMAIN }}/cauth/sign_in"
+spec:
+  tls:
+  - hosts:
+    - www.{{ DOMAIN }}
+    secretName: ndslabs-tls-secret
+  rules:
+  - host: www.{{ DOMAIN }}
+    http:
+      paths:
+      - path: /logs
+        backend:
+          serviceName: ndslabs-webui
+          servicePort: 80
+      - path: /dashboard
+        backend:
+          serviceName: ndslabs-webui
+          servicePort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ndslabs-open
 spec:
   tls:
   - hosts:
@@ -15,7 +40,31 @@ spec:
         backend:
           serviceName: ndslabs-apiserver
           servicePort: 30001
-      - path: /
+      - path: /cauth
+        backend:
+          serviceName: ndslabs-webui
+          servicePort: 80
+      - path: /login
+        backend:
+          serviceName: ndslabs-webui
+          servicePort: 80
+      - path: /landing
+        backend:
+          serviceName: ndslabs-webui
+          servicePort: 80
+      - path: /bower_components
+        backend:
+          serviceName: ndslabs-webui
+          servicePort: 80
+      - path: /shared
+        backend:
+          serviceName: ndslabs-webui
+          servicePort: 80
+      - path: /ConfigModule.js
+        backend:
+          serviceName: ndslabs-webui
+          servicePort: 80
+      - path: /asset
         backend:
           serviceName: ndslabs-webui
           servicePort: 80
@@ -98,7 +147,7 @@ spec:
         app: nginx-ingress
     spec:
       containers:
-      - image: gcr.io/google_containers/nginx-ingress-controller:0.8.2
+      - image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.9.0
         imagePullPolicy: Always
         name: nginx-ingress
         ports:
@@ -118,7 +167,6 @@ spec:
         args:
         - /nginx-ingress-controller
         - --default-backend-service=default/default-http-backend
-        - --running-in-cluster=true
-        - --healthz-port=9999
-        - --nginx-configmap=$(POD_NAMESPACE)/nginx-ingress-conf
+        - --healthz-port=10254
+        - --configmap=$(POD_NAMESPACE)/nginx-ingress-conf
       hostNetwork: true
