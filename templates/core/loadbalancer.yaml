@@ -4,7 +4,7 @@ metadata:
   name: ndslabs-auth
   annotations:
     "nginx.ingress.kubernetes.io/auth-url": "https://www.{{ DOMAIN }}/cauth/auth"
-    "nginx.ingress.kubernetes.io/auth-signin": "https://www.{{ DOMAIN }}/cauth/sign_in"
+    "nginx.ingress.kubernetes.io/auth-signin": "https://www.{{ DOMAIN }}/login/#/"
 spec:
   tls:
   - hosts:
