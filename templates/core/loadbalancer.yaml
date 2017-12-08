@@ -5,6 +5,8 @@ metadata:
   annotations:
     "nginx.ingress.kubernetes.io/auth-url": "https://www.{{ DOMAIN }}/cauth/auth"
     "nginx.ingress.kubernetes.io/auth-signin": "https://www.{{ DOMAIN }}/login/#/"
+    "nginx.ingress.kubernetes.io/ssl-redirect": "true"
+    "nginx.ingress.kubernetes.io/force-ssl-redirect": "true"
 spec:
   tls:
   - hosts:
@@ -27,6 +29,9 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: ndslabs-open
+  annotations:
+    "nginx.ingress.kubernetes.io/ssl-redirect": "true"
+    "nginx.ingress.kubernetes.io/force-ssl-redirect": "true"
 spec:
   tls:
   - hosts:
@@ -57,6 +62,10 @@ spec:
           serviceName: ndslabs-webui
           servicePort: 80
       - path: /shared
+        backend:
+          serviceName: ndslabs-webui
+          servicePort: 80
+      - path: /swagger.yaml
         backend:
           serviceName: ndslabs-webui
           servicePort: 80
