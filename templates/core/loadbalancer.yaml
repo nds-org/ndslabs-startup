@@ -45,35 +45,7 @@ spec:
         backend:
           serviceName: ndslabs-apiserver
           servicePort: 30001
-      - path: /cauth
-        backend:
-          serviceName: ndslabs-webui
-          servicePort: 80
-      - path: /login
-        backend:
-          serviceName: ndslabs-webui
-          servicePort: 80
-      - path: /landing
-        backend:
-          serviceName: ndslabs-webui
-          servicePort: 80
-      - path: /bower_components
-        backend:
-          serviceName: ndslabs-webui
-          servicePort: 80
-      - path: /shared
-        backend:
-          serviceName: ndslabs-webui
-          servicePort: 80
-      - path: /swagger.yaml
-        backend:
-          serviceName: ndslabs-webui
-          servicePort: 80
-      - path: /ConfigModule.js
-        backend:
-          serviceName: ndslabs-webui
-          servicePort: 80
-      - path: /asset
+      - path: /
         backend:
           serviceName: ndslabs-webui
           servicePort: 80
