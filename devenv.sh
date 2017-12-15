@@ -73,7 +73,7 @@ elif [ "$command" == "basic-auth" ]; then
     $ECHO '\nStarting developer environment and restarting UI...'
     $BINDIR/kubectl replace -f templates/dev/webui.yaml
     $BINDIR/kubectl delete pod $(kubectl get pods | grep ndslabs-webui | awk '{print $1}')
-    cat templates/dev/cloud9.yaml | sed -e "s#{{[ ]*DOMAIN[ ]*}}#${DOMAIN}#g" | kubectl replace -f -
+    cat templates/dev/cloud9.yaml | sed -e "s#{{[ ]*DOMAIN[ ]*}}#${DOMAIN}#g" | kubectl apply -f -
 
     $ECHO '\nWaiting for Cloud9 developer environment to start...'
     until $(curl --output /dev/null --silent --fail --header "Host: cloud9.$DOMAIN" localhost/); do
