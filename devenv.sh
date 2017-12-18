@@ -71,7 +71,7 @@ elif [ "$command" == "basic-auth" ]; then
     $ECHO "    DOMAIN=$DOMAIN"
 
     $ECHO '\nStarting developer environment and restarting UI...'
-    $BINDIR/kubectl replace -f templates/dev/webui.yaml
+    $BINDIR/kubectl apply -f templates/dev/webui.yaml
     $BINDIR/kubectl delete pod $(kubectl get pods | grep ndslabs-webui | awk '{print $1}')
     cat templates/dev/cloud9.yaml | sed -e "s#{{[ ]*DOMAIN[ ]*}}#${DOMAIN}#g" | kubectl apply -f -
 
