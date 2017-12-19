@@ -150,4 +150,5 @@ spec:
         - --default-backend-service=default/default-http-backend
         - --healthz-port=10254
         - --configmap=$(POD_NAMESPACE)/nginx-ingress-conf
+        - --default-ssl-certificate=$(POD_NAMESPACE)/ndslabs-tls-secret
       hostNetwork: true

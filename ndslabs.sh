@@ -54,7 +54,6 @@ function start_all() {
   # Create secret from TLS certs
   $ECHO '\nGenerating Labs Workbench TLS Secret...'
   $KUBECTL_BIN create secret generic ndslabs-tls-secret --from-file=tls.crt="certs/${DOMAIN}.cert" --from-file=tls.key="certs/${DOMAIN}.key" --namespace=default
-  $KUBECTL_BIN create secret generic ndslabs-tls-secret --from-file=tls.crt="certs/${DOMAIN}.cert" --from-file=tls.key="certs/${DOMAIN}.key" --namespace=kube-system
 
   $ECHO '\nStarting Labs Workbench core services...'
 
