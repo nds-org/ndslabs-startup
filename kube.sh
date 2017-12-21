@@ -92,6 +92,7 @@ if [ "$command" == "up" ]; then
     --address="0.0.0.0" \
     --api-servers=http://localhost:8080 \
     --config=/etc/kubernetes/manifests \
+    --image-pull-progress-deadline=10m \
     --allow-privileged=true --v=2 \
     >/dev/null 2>&1 \
     || docker start kubelet >/dev/null 2>&1)
