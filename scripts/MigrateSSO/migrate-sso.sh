@@ -26,7 +26,6 @@ for namespace in $USERS; do
    INGRESS=$($KUBECTL_BIN get ingress --all-namespaces --no-headers | grep -v default | grep -v kube-system | awk '{print $2}')
    for ingress in $INGRESS; do
        $ECHO "Migrating ingress $INGRESS\n"
-       #$KUBECTL_BIN get ingress $ingress --namespace=$namespace --no-headers -o json |  jq ".metadata.annotations={}" | jq ".metadata.annotations={\"nginx.ingress.kubernetes.io/auth-signin\":\"$signin_url\", \"nginx.ingress.kubernetes.io/auth-url\": \"$auth_url\"}" | $KUBECTL_BIN apply --namespace=${namespace} -f -
        $KUBECTL_BIN get ingress $ingress --namespace=$namespace --no-headers -o json |  jq ".metadata.annotations={}" | jq ".metadata.annotations={\"nginx.ingress.kubernetes.io/auth-signin\":\"$signin_url\", \"nginx.ingress.kubernetes.io/auth-url\": \"$auth_url\"}" | $KUBECTL_BIN replace --namespace=${namespace} -f -
    done  
 done
