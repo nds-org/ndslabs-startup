@@ -53,7 +53,7 @@ spec:
          name: src
       containers:
       - name: cloud9 
-        image: ndslabs/cloud9-nodejs:latest
+        image: bodom0015/cloud9-nodejs:lts
         imagePullPolicy: Always
         volumeMounts:
           - name: src
