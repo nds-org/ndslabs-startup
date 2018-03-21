@@ -1,0 +1,68 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: oauth2-proxy
+  name: oauth2-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: oauth2-proxy
+  template:
+    metadata:
+      labels:
+        k8s-app: oauth2-proxy
+    spec:
+      containers:
+      - args:
+        - --skip-provider-button
+        - --provider=globus
+        - --email-domain=*
+        - --upstream=http://$(NDSLABS_APISERVER_SERVICE_HOST):30002/
+        - --pass-access-token=true
+        - --pass-host-header=true
+        - --pass-user-headers=true
+        - --http-address=0.0.0.0:4180
+        env:
+        - name: OAUTH2_PROXY_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: ndslabs-config
+              key: oauth2.client_id
+        - name: OAUTH2_PROXY_CLIENT_SECRET
+          valueFrom:
+            configMapKeyRef:
+              name: ndslabs-config
+              key: oauth2.client_secret
+        - name: OAUTH2_PROXY_COOKIE_SECRET
+          valueFrom:
+            configMapKeyRef:
+              name: ndslabs-config
+              key: oauth2.cookie_secret
+        - name: OAUTH2_PROXY_COOKIE_DOMAIN
+          valueFrom:
+            configMapKeyRef:
+              name: ndslabs-config
+              key: oauth2.cookie_domain
+        image: craigwillis/oauth2_proxy:latest
+        imagePullPolicy: Always
+        name: oauth2-proxy
+        ports:
+        - containerPort: 4180
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: oauth2-proxy
+  name: oauth2-proxy
+spec:
+  ports:
+  - name: http
+    port: 4180
+    protocol: TCP
+    targetPort: 4180
+  selector:
+    k8s-app: oauth2-proxy
