@@ -45,7 +45,7 @@ spec:
             configMapKeyRef:
               name: ndslabs-config
               key: oauth2.cookie_domain
-        image: craigwillis/oauth2_proxy:latest
+        image: ndslabs/oauth2_proxy:globus-provider
         imagePullPolicy: Always
         name: oauth2-proxy
         ports:

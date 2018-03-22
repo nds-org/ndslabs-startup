@@ -39,7 +39,7 @@ function start_all() {
   $KUBECTL_BIN apply -f templates/config.yaml >/dev/null 2>&1
 
   # Grab our DOMAIN from the configmap
-  DOMAIN="$(cat templates/config.yaml | grep domain | awk '{print $2}' | sed s/\"//g)"
+  DOMAIN="$(cat templates/config.yaml | grep workbench.domain | awk '{print $2}' | sed s/\"//g)"
   $ECHO "Starting Labs Workbench:"
   $ECHO "    DOMAIN=$DOMAIN"
 
