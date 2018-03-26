@@ -29,6 +29,11 @@ spec:
               configMapKeyRef:
                 name: ndslabs-config
                 key: tls.enable
+          - name: SIGNIN_URL
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: workbench.signin_url
           - name: ANALYTICS_ACCOUNT
             valueFrom:
               configMapKeyRef:
