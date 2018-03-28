@@ -22,6 +22,10 @@ spec:
     component: ndslabs-apiserver
   ports:
     - port: 30001
+      name: api
+      protocol: TCP
+    - port: 30002
+      name: admin
       protocol: TCP
 ---
 apiVersion: v1

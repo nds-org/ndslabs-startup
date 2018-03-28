@@ -39,7 +39,7 @@ function start_all() {
   $KUBECTL_BIN apply -f templates/config.yaml >/dev/null 2>&1
 
   # Grab our DOMAIN from the configmap
-  DOMAIN="$(cat templates/config.yaml | grep domain | awk '{print $2}' | sed s/\"//g)"
+  DOMAIN="$(cat templates/config.yaml | grep workbench.domain | awk '{print $2}' | sed s/\"//g)"
   $ECHO "Starting Labs Workbench:"
   $ECHO "    DOMAIN=$DOMAIN"
 
@@ -59,7 +59,7 @@ function start_all() {
 
   # Pre-process jinja-style variables by piping through sed
   cat templates/core/loadbalancer.yaml | sed -e "s#{{[ \s]*DOMAIN[ \s]*}}#$DOMAIN#g" | $KUBECTL_BIN apply -f -
-  $KUBECTL_BIN apply -f templates/smtp/ -f templates/core/svc.yaml -f templates/core/etcd.yaml -f templates/core/apiserver.yaml
+  $KUBECTL_BIN apply -f templates/smtp/ -f templates/core/svc.yaml -f templates/core/etcd.yaml -f templates/core/apiserver.yaml -f templates/core/oauth2-proxy.yaml
 
   # Only start bind if requested
   if [ "$3" == YES ]; then
@@ -121,6 +121,7 @@ function stop_all() {
 
   $ECHO 'Stopping Labs Workbench core services...'
   $KUBECTL_BIN delete rc,svc ndslabs-etcd ndslabs-smtp default-http-backend >/dev/null 2>&1
+  $KUBECTL_BIN delete deploy,svc oauth2-proxy >/dev/null 2>&1
   $KUBECTL_BIN delete rc nginx-ilb-rc >/dev/null 2>&1
   $KUBECTL_BIN delete ingress ndslabs-ingress >/dev/null 2>&1
   $KUBECTL_BIN delete configmap nginx-ingress-conf >/dev/null 2>&1

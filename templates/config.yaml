@@ -12,6 +12,8 @@ data:
   workbench.name: "Labs Workbench"
   workbench.support_email: "ndslabs-support@nationaldataservice.org"
   workbench.analytics_tracking_id: ""
+  workbench.signin_url: "https://www.local.ndslabs.org/oauth2/authorize"
+  workbench.auth_url: "https://www.local.ndslabs.org/oauth2/auth"
 
   # IP address used by DNS service 
   #workbench.ip: ""
@@ -48,3 +50,10 @@ data:
   smtp.smarthost_port: ""
   smtp.smarthost_user: ""
   smtp.smarthost_password: ""
+
+
+  # Oauth2
+  oauth2.client_id: ""
+  oauth2.client_secret: ""
+  oauth2.cookie_secret: ""
+  oauth2.cookie_domain: ".local.ndslabs.org"

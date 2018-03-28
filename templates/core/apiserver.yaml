@@ -58,6 +58,16 @@ spec:
               configMapKeyRef:
                 name: ndslabs-config
                 key: git.spec_branch
+          - name: SIGNIN_URL
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: workbench.signin_url
+          - name: AUTH_URL
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: workbench.auth_url
           - name: CORS_ORIGIN_ADDR
             value: "https://www.$(DOMAIN)"
           - name: ETCD_ADDR

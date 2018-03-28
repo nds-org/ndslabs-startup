@@ -67,7 +67,7 @@ elif [ "$command" == "basic-auth" ]; then
     $ECHO "If your path differs, you can manually alter the YAML templates for cloud9 and the webui located in ./templates/dev/"
 
     # Grab our DOMAIN from the configmap
-    DOMAIN="$(cat templates/config.yaml | grep domain | awk '{print $2}' | sed s/\"//g)"
+    DOMAIN="$(cat templates/config.yaml | grep workbench.domain | awk '{print $2}' | sed s/\"//g)"
     $ECHO "    DOMAIN=$DOMAIN"
 
     $ECHO '\nStarting developer environment and restarting UI...'
