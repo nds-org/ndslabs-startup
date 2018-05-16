@@ -44,16 +44,6 @@ spec:
               configMapKeyRef:
                 name: ndslabs-config
                 key: workbench.support_email
-          - name: GIT_DROPIN_REPO
-            valueFrom:
-              configMapKeyRef:
-                name: ndslabs-config
-                key: git.dropin_repo
-          - name: GIT_DROPIN_BRANCH
-            valueFrom:
-              configMapKeyRef:
-                name: ndslabs-config
-                key: git.dropin_branch
           - name: APISERVER_HOST
             value: "www.$(DOMAIN)"
           - name: APISERVER_PORT
