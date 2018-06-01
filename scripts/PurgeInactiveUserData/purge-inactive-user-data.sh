@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Usage: ./purge-inactive-user-data.sh > ./purge-data.sh; chmod 755 ./purge-data.sh; bash purge-data.sh
+# Usage: ./purge-inactive-user-data.sh [epochThreshold] > ./purge-data.sh; chmod 755 ./purge-data.sh; bash purge-data.sh
 #
 set -e
 
@@ -17,7 +17,8 @@ WBAPI_POD_NAME="$($KUBECTL get pods | grep -v Terminating | grep ndslabs-apiserv
 WBAPI_EXEC="$ECHO kubectl exec -it $WBAPI_POD_NAME -- "
 #$ECHO "Pod name: $ETCD_POD_NAME"
 
-THRESHOLD=1525205042
+# TODO: Roll the default epoch threshold forward occasionally
+EPOCH_THRESHOLD=${1:-1525205042}
 
 DEFAULT_TIMEOUT=480
 DEFAULT_LASTLOGIN=0
@@ -36,7 +37,7 @@ for namespace in $USERS; do
 
         # Check if this user has logged in since the checkpoint
         last_login=$($ECHO $original_json | jq ".lastLogin")
-        if [ "$last_login" -lt "$THRESHOLD" -a "$last_login" -ne "0" ]; then
+        if [ "$last_login" -lt "$EPOCH_THRESHOLD" -a "$last_login" -ne "0" ]; then
 #               $ECHO "Purging user data: ${namespace} has been inactive since $last_login.."
                 username=$(echo $namespace | awk -F'/' '{print $4}')
                 $WBAPI_EXEC bash -c \'rm -rf /data/ndslabs/$username/*\'
