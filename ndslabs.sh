@@ -62,6 +62,9 @@ function start_all() {
   $KUBECTL_BIN apply -f templates/smtp/ -f templates/core/svc.yaml -f templates/core/etcd.yaml -f templates/core/apiserver.yaml
   #$KUBECTL_BIN apply -f templates/core/oauth2-proxy.yaml -f templates/core/loadbalancer.yaml
 
+  # Create a workbench ServiceAccount and some RBAC rules for it
+  $KUBECTL_BIN apply -f rbac/
+
   # Only start bind if requested
   if [ "$3" == YES ]; then
     $KUBECTL_BIN apply -f templates/core/bind.yaml
@@ -126,6 +129,7 @@ function stop_all() {
   $KUBECTL_BIN delete rc nginx-ilb-rc >/dev/null 2>&1
   $KUBECTL_BIN delete ingress ndslabs-ingress >/dev/null 2>&1
   $KUBECTL_BIN delete configmap nginx-ingress-conf >/dev/null 2>&1
+  $KUBECTL_BIN delete serviceaccount,clusterrole,clusterrolebinding workbench >/dev/null 2>&1
 
   $ECHO 'Deleting Labs Workbench TLS Secret...'
   $KUBECTL_BIN delete secret ndslabs-tls-secret --namespace=default >/dev/null 2>&1
