@@ -1,0 +1,17 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: workbench
+rules:
+- apiGroups: ["", "extensions", "apps", "batch", "policy", "rbac.authorization.k8s.io"]
+  resources: ["componentstatuses", "persistentvolumeclaims", "replicasets", "deployments", "events", "endpoints", "pods", "pods/log", "namespaces", "services", "replicationcontrollers", "secrets", "resourcequotas", "limitranges"]
+  verbs: ["get", "list", "watch", "update", "patch", "create", "delete"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  resourceNames: ["ndslabs-config"]
+  verbs: ["get", "update"]
+- apiGroups: ["extensions"]
+  resources: ["ingress"]
+  verbs: ["get", "list", "watch", "update", "patch", "create", "delete"]
+- nonResourceURLs: ["*"]
+  verbs: ["*"]
