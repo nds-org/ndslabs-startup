@@ -11,7 +11,7 @@ rules:
   resourceNames: ["ndslabs-config"]
   verbs: ["get", "update"]
 - apiGroups: ["extensions"]
-  resources: ["ingress"]
+  resources: ["ingresses"]
   verbs: ["get", "list", "watch", "update", "patch", "create", "delete"]
 - nonResourceURLs: ["*"]
   verbs: ["*"]
