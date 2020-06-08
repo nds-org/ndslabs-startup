@@ -11,6 +11,7 @@ spec:
       labels:
         component: ndslabs-apiserver
     spec:
+      serviceAccountName: workbench
       volumes:
        - hostPath:
             path: "/ndslabs/data/volumes"
@@ -81,6 +82,63 @@ spec:
           - name: TOKEN_PATH
             value: "/var/run/secrets/kubernetes.io/serviceaccount/token"
           - name: SMTP_HOST
-            value: "$(NDSLABS_SMTP_SERVICE_HOST)"
+            value: "localhost"
           - name: SMTP_TLS
             value: "false"
+      - image: namshi/smtp
+        name: ndslabs-smtp
+        ports:
+        - containerPort: 25
+          name: smtp
+          protocol: TCP
+        env:
+          - name: MAILNAME
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.host
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.port
+          - name: GMAIL_USER
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.gmail_user
+          - name: GMAIL_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.gmail_pass
+          - name: SES_USER
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.aws_ses_user
+          - name: SES_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.aws_ses_password
+          - name: SMARTHOST_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.smarthost_address
+          - name: SMARTHOST_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.smarthost_port
+          - name: SMARTHOST_USER
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.smarthost_user
+          - name: SMARTHOST_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: ndslabs-config
+                key: smtp.smarthost_password

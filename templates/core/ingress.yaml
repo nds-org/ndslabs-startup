@@ -1,0 +1,56 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ndslabs-auth
+  annotations:
+    "nginx.ingress.kubernetes.io/auth-url": "https://www.{{ DOMAIN }}/oauth2/auth"
+    "nginx.ingress.kubernetes.io/auth-signin": "https://www.{{ DOMAIN }}/oauth2/authorize"
+    "nginx.ingress.kubernetes.io/ssl-redirect": "true"
+    "nginx.ingress.kubernetes.io/force-ssl-redirect": "true"
+spec:
+  tls:
+  - hosts:
+    - www.{{ DOMAIN }}
+    secretName: ndslabs-tls-secret
+  rules:
+  - host: www.{{ DOMAIN }}
+    http:
+      paths:
+      - path: /logs
+        backend:
+          serviceName: ndslabs-webui
+          servicePort: 80
+      - path: /dashboard
+        backend:
+          serviceName: ndslabs-webui
+          servicePort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ndslabs-open
+  annotations:
+    "nginx.ingress.kubernetes.io/ssl-redirect": "true"
+    "nginx.ingress.kubernetes.io/force-ssl-redirect": "true"
+spec:
+  tls:
+  - hosts:
+    - www.{{ DOMAIN }}
+    secretName: ndslabs-tls-secret
+  rules:
+  - host: www.{{ DOMAIN }}
+    http:
+      paths:
+      - path: /api
+        backend:
+          serviceName: ndslabs-apiserver
+          servicePort: 30001
+      - path: /
+        backend:
+          serviceName: ndslabs-webui
+          servicePort: 80
+      - path: /oauth2
+        backend:
+          serviceName: oauth2-proxy
+          servicePort: 4180
+---
