@@ -39,6 +39,8 @@ def saltPassword(password):
 	apriPassword = apriPassword[apriPassword.index('$apr1$'):]
 	apriPassword = apriPassword.replace("\n", "")
 	apriPassword = apriPassword.replace("\r", "")
+        apriPassword = apriPassword.replace("\\n", "")
+        apriPassword = apriPassword.replace("\\r'", "")
 	return apriPassword
 
 
