@@ -1,3 +1,6 @@
+# **DEPRECATED**
+This is a legacy startup procedure for NDS Labs Workbench. Please use the [Workbench Helm Chart](https://github.com/nds-org/workbench-helm-chart) to deploy and start using the platform.
+
 # Labs Workbench Developer Startup
 
 This repository contains startup scripts to run the Labs Workbench services on a
